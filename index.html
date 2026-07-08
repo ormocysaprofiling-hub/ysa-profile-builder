@@ -62,10 +62,16 @@
       <p class="section-eyebrow">Ormoc Stake · Young Single Adults</p>
       <h1 class="font-display text-xl font-semibold text-[var(--ink)] -mt-0.5">Covenant Profile Builder</h1>
     </div>
-    <button type="button" onclick="downloadPDF()" class="w-full sm:w-auto bg-[var(--ocean)] text-white text-sm font-semibold py-2.5 px-6 rounded-lg hover:bg-[var(--ocean-dark)] shadow-sm active:scale-95 transition-all">
-      Download Profile PDF
-    </button>
+    <div class="flex flex-col sm:flex-row items-center gap-2 w-full sm:w-auto">
+      <button type="button" onclick="downloadPDF()" class="w-full sm:w-auto bg-white text-[var(--ocean-dark)] border border-[var(--ocean)] text-sm font-semibold py-2.5 px-5 rounded-lg hover:bg-[var(--ocean)]/5 shadow-sm active:scale-95 transition-all">
+        Download PDF
+      </button>
+      <button type="button" id="submitBtn" onclick="submitProfile()" class="w-full sm:w-auto bg-[var(--coral)] text-white text-sm font-semibold py-2.5 px-6 rounded-lg hover:bg-[#D0603D] shadow-sm active:scale-95 transition-all disabled:opacity-60">
+        Submit Profile
+      </button>
+    </div>
   </div>
+  <p id="submitStatus" class="max-w-7xl mx-auto text-xs mt-2 hidden"></p>
 </header>
 
 <main class="flex-1 max-w-7xl w-full mx-auto p-4 md:p-6 grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
@@ -388,18 +394,84 @@
     }
   });
 
-  function downloadPDF(){
-    const element = document.getElementById('cvPreview');
+  function buildFilename(){
     const nameField = document.getElementById('inputName').value.trim() || 'YSA_Profile';
-    const filename = nameField.replace(/[^a-z0-9]/gi,'_').toLowerCase() + '_ysa_profile.pdf';
-    const opt = {
+    return nameField.replace(/[^a-z0-9]/gi,'_').toLowerCase() + '_ysa_profile.pdf';
+  }
+
+  function pdfOptions(filename){
+    return {
       margin: [0.4,0.4,0.4,0.4],
       filename: filename,
       image: { type:'jpeg', quality:0.98 },
       html2canvas: { scale:2, useCORS:true, letterRendering:true },
       jsPDF: { unit:'in', format:'letter', orientation:'portrait' }
     };
-    html2pdf().set(opt).from(element).save();
+  }
+
+  function downloadPDF(){
+    const element = document.getElementById('cvPreview');
+    html2pdf().set(pdfOptions(buildFilename())).from(element).save();
+  }
+
+  // ── Submit to Google Drive ──────────────────────────────────────────
+  // 1. Deploy the companion Apps Script (see setup guide) as a Web App.
+  // 2. Paste the deployment URL below, replacing the placeholder.
+  const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyv0xjiX0J4bkdd0i8SChReKMCLRoiUogZZtm_6l9cJUXoTtDmixxWna_ljOu7lUWqb/exec';
+
+  async function submitProfile(){
+    const statusEl = document.getElementById('submitStatus');
+    const btn = document.getElementById('submitBtn');
+
+    if(!APPS_SCRIPT_URL || APPS_SCRIPT_URL.indexOf('PASTE_YOUR') === 0){
+      statusEl.textContent = 'Submit-to-Drive isn\'t configured yet — the site owner needs to add the Apps Script URL. You can still use Download PDF.';
+      statusEl.className = 'max-w-7xl mx-auto text-xs mt-2 text-[var(--coral)]';
+      statusEl.classList.remove('hidden');
+      return;
+    }
+
+    const name = document.getElementById('inputName').value.trim();
+    if(!name){
+      statusEl.textContent = 'Please enter your full name before submitting.';
+      statusEl.className = 'max-w-7xl mx-auto text-xs mt-2 text-[var(--coral)]';
+      statusEl.classList.remove('hidden');
+      return;
+    }
+
+    btn.disabled = true;
+    btn.textContent = 'Submitting…';
+    statusEl.classList.add('hidden');
+
+    try {
+      const element = document.getElementById('cvPreview');
+      const filename = buildFilename();
+      const pdfDataUri = await html2pdf().set(pdfOptions(filename)).from(element).outputPdf('datauristring');
+      const base64 = pdfDataUri.split(',')[1];
+
+      const response = await fetch(APPS_SCRIPT_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'text/plain;charset=utf-8' }, // avoids CORS preflight on Apps Script
+        body: JSON.stringify({ filename: filename, pdfBase64: base64 })
+      });
+      const result = await response.json();
+
+      if(result.status === 'success'){
+        btn.textContent = 'Submitted ✓';
+        statusEl.textContent = 'Your profile was saved to the stake Drive folder. Thank you!';
+        statusEl.className = 'max-w-7xl mx-auto text-xs mt-2 text-[var(--ocean-dark)]';
+        statusEl.classList.remove('hidden');
+      } else {
+        throw new Error(result.message || 'Unknown error');
+      }
+    } catch(err){
+      btn.textContent = 'Submit Profile';
+      statusEl.textContent = 'Submission failed (' + err.message + '). Please try Download PDF and send it manually instead.';
+      statusEl.className = 'max-w-7xl mx-auto text-xs mt-2 text-[var(--coral)]';
+      statusEl.classList.remove('hidden');
+    } finally {
+      btn.disabled = false;
+      if(btn.textContent === 'Submitting…') btn.textContent = 'Submit Profile';
+    }
   }
 
   render();
