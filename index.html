@@ -7,109 +7,140 @@
 <script src="https://cdn.tailwindcss.com"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,500;0,9..144,600;1,9..144,400&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght=0,9..144,300;0,9..144,400;0,9..144,500;0,9..144,600;1,9..144,400&family=Inter:wght@300;400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
-  :root{
-    --ink:#1A2E35;
-    --paper:#FAFAF8;
-    --ocean:#1F6F78;
-    --ocean-dark:#14515A;
-    --coral:#E8734F;
-    --gold:#B8862F;
-    --line:#DCE3E0;
-    --card:#FFFFFF;
+  :root {
+    --ink: #111B1E;
+    --paper: #F6F8F7;
+    --ocean: #19565E;
+    --ocean-light: #E8F1F1;
+    --ocean-dark: #0F373D;
+    --coral: #DE5D35;
+    --coral-light: #FDF2EE;
+    --gold: #A37220;
+    --line: #E1E7E5;
+    --card: #FFFFFF;
   }
-  *{ font-family:'Inter', sans-serif; }
-  .font-display{ font-family:'Fraunces', serif; }
-  .font-mono{ font-family:'IBM Plex Mono', monospace; }
-  body{ background:var(--paper); color:var(--ink); }
-  @media print{ .no-print{ display:none !important; } }
-  .custom-scrollbar::-webkit-scrollbar{ width:6px; }
-  .custom-scrollbar::-webkit-scrollbar-track{ background:transparent; }
-  .custom-scrollbar::-webkit-scrollbar-thumb{ background:#B9CFCF; border-radius:4px; }
+  
+  * { 
+    font-family: 'Inter', sans-serif; 
+    -webkit-font-smoothing: antialiased;
+  }
+  .font-display { font-family: 'Fraunces', serif; }
+  .font-mono { font-family: 'IBM Plex Mono', monospace; }
+  
+  body { background: var(--paper); color: var(--ink); }
+  @media print { .no-print { display:none !important; } }
+  
+  /* Scrollbar Aesthetics */
+  .custom-scrollbar::-webkit-scrollbar { width: 6px; height: 6px; }
+  .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
+  .custom-scrollbar::-webkit-scrollbar-thumb { background: #CBDCDA; border-radius: 8px; }
+  .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: #A4C1BE; }
 
-  .field-label{ font-family:'IBM Plex Mono', monospace; font-size:10.5px; letter-spacing:.06em; text-transform:uppercase; color:var(--ocean-dark); font-weight:600; }
-  .field-input{ width:100%; font-size:13.5px; padding:.55rem .7rem; border:1px solid var(--line); border-radius:.5rem; background:#fff; outline:none; transition:.15s; color:var(--ink); }
-  .field-input:focus{ border-color:var(--ocean); box-shadow:0 0 0 3px rgba(31,111,120,.12); }
-  .section-eyebrow{ font-family:'IBM Plex Mono', monospace; font-size:11px; letter-spacing:.14em; text-transform:uppercase; color:var(--coral); font-weight:600; }
-  .chip-check{ display:flex; align-items:flex-start; gap:.5rem; font-size:12.5px; padding:.4rem .55rem; border:1px solid var(--line); border-radius:.5rem; cursor:pointer; transition:.15s; background:#fff; }
-  .chip-check:hover{ border-color:var(--ocean); }
-  .chip-check input{ accent-color:var(--ocean); margin-top:2px; }
-  .radio-row{ display:flex; align-items:center; gap:.45rem; font-size:13px; padding:.5rem .65rem; border:1px solid var(--line); border-radius:.5rem; cursor:pointer; transition:.15s; background:#fff; }
-  .radio-row:hover{ border-color:var(--coral); }
-  .radio-row input{ accent-color:var(--coral); }
+  /* Premium Form Controls */
+  .field-label { font-family: 'IBM Plex Mono', monospace; font-size: 10px; letter-spacing: .08em; text-transform: uppercase; color: var(--ocean-dark); font-weight: 600; }
+  .field-input { width: 100%; font-size: 13.5px; padding: .65rem .8rem; border: 1px solid var(--line); border-radius: .6rem; background: #fff; outline: none; transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1); color: var(--ink); }
+  .field-input:focus { border-color: var(--ocean); box-shadow: 0 0 0 4px rgba(25, 86, 94, 0.08); }
+  .section-eyebrow { font-family: 'IBM Plex Mono', monospace; font-size: 10.5px; letter-spacing: .15em; text-transform: uppercase; color: var(--coral); font-weight: 600; }
+  
+  /* Modern Interactive Chips */
+  .chip-check { display: flex; align-items: flex-start; gap: .6rem; font-size: 13px; padding: .6rem .75rem; border: 1px solid var(--line); border-radius: .6rem; cursor: pointer; transition: all 0.15s ease; background: #fff; position: relative; user-select: none; }
+  .chip-check:hover { border-color: var(--ocean); background: rgba(25, 86, 94, 0.01); }
+  .chip-check has-(:checked) { border-color: var(--ocean); background: var(--ocean-light); }
+  .chip-check input { accent-color: var(--ocean); margin-top: 3px; width: 15px; height: 15px; }
+  
+  .radio-row { display: flex; align-items: center; gap: .5rem; font-size: 13.5px; padding: .6rem .75rem; border: 1px solid var(--line); border-radius: .6rem; cursor: pointer; transition: all 0.15s ease; background: #fff; user-select: none; }
+  .radio-row:hover { border-color: var(--coral); background: rgba(222, 93, 53, 0.01); }
+  .radio-row has-(:checked) { border-color: var(--coral); background: var(--coral-light); }
+  .radio-row input { accent-color: var(--coral); width: 15px; height: 15px; }
 
-  /* Perforation divider — passport-page motif */
-  .perforation{ position:relative; height:1px; background:repeating-linear-gradient(90deg, var(--line) 0 6px, transparent 6px 12px); margin:1.1rem 0; }
+  .perforation { position: relative; height: 1px; background: repeating-linear-gradient(90deg, var(--line) 0 6px, transparent 6px 12px); margin: 1.5rem 0; }
 
-  /* Preview card = record/passport styling */
-  #cvPreview{ background:var(--card); position:relative; }
-  #cvPreview::before{ content:""; position:absolute; top:0; left:0; right:0; height:5px; background:linear-gradient(90deg, var(--ocean) 0%, var(--ocean) 60%, var(--coral) 60%, var(--coral) 100%); }
-  .pill{ display:inline-flex; align-items:center; gap:.3rem; font-size:10.5px; font-weight:600; letter-spacing:.03em; padding:.28rem .6rem; border-radius:999px; }
-  .pill-ocean{ background:rgba(31,111,120,.1); color:var(--ocean-dark); border:1px solid rgba(31,111,120,.25); }
-  .pill-gold{ background:rgba(184,134,47,.1); color:var(--gold); border:1px solid rgba(184,134,47,.3); }
-  .pill-coral{ background:rgba(232,115,79,.1); color:#B24E30; border:1px solid rgba(232,115,79,.3); }
+  /* Preview Canvas Styling */
+  #cvPreview { background: var(--card); position: relative; transition: transform 0.2s ease; }
+  #cvPreview::before { content: ""; position: absolute; top: 0; left: 0; right: 0; height: 6px; background: linear-gradient(90deg, var(--ocean) 0%, var(--ocean) 68%, var(--coral) 68%, var(--coral) 100%); }
+  
+  /* High-end Badges */
+  .pill { display: inline-flex; align-items: center; gap: .3rem; font-size: 10px; font-weight: 600; letter-spacing: .04em; padding: .3rem .75rem; border-radius: 6px; text-transform: uppercase; }
+  .pill-ocean { background: var(--ocean-light); color: var(--ocean-dark); border: 1px solid rgba(25, 86, 94, 0.15); }
+  .pill-gold { background: #FEF8ED; color: var(--gold); border: 1px solid rgba(163, 114, 32, 0.18); }
+  .pill-coral { background: var(--coral-light); color: #B03E1A; border: 1px solid rgba(222, 93, 53, 0.18); }
 
-  /* Logo signature element */
-  .seal-logo{ width:52px; height:auto; flex-shrink:0; filter:drop-shadow(0 2px 3px rgba(26,46,53,.15)); }
+  .seal-logo { width: 56px; height: auto; flex-shrink: 0; filter: drop-shadow(0 3px 5px rgba(26,46,53,0.12)); }
+  
+  /* Collapsible Animation */
+  .collapsible-section { max-height: 0; opacity: 0; overflow: hidden; transition: max-height 0.3s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.2s ease; }
+  .collapsible-section.show { max-height: 300px; opacity: 1; margin-top: 1rem; }
 </style>
 </head>
-<body class="min-h-screen flex flex-col">
+<body class="min-h-screen flex flex-col antialiased">
 
-<header class="bg-white border-b border-[var(--line)] py-4 px-6 no-print sticky top-0 z-10">
-  <div class="max-w-7xl mx-auto flex flex-col sm:flex-row justify-between items-center gap-3">
+<!-- ACTION HEADER -->
+<header class="bg-white border-b border-[var(--line)] py-3.5 px-6 no-print sticky top-0 z-50 shadow-xs backdrop-blur-md bg-white/95">
+  <div class="max-w-7xl mx-auto flex flex-col sm:flex-row justify-between items-center gap-4">
     <div>
-      <p class="section-eyebrow">Ormoc Stake · Young Single Adults</p>
-      <h1 class="font-display text-xl font-semibold text-[var(--ink)] -mt-0.5">Covenant Profile Builder</h1>
+      <p class="section-eyebrow text-xs">Ormoc Stake · Young Single Adults</p>
+      <h1 class="font-display text-2xl font-semibold text-[var(--ink)] -mt-0.5">Covenant Profile Builder</h1>
     </div>
-    <div class="flex flex-col sm:flex-row items-center gap-2 w-full sm:w-auto">
-      <button type="button" onclick="downloadPDF()" class="w-full sm:w-auto bg-white text-[var(--ocean-dark)] border border-[var(--ocean)] text-sm font-semibold py-2.5 px-5 rounded-lg hover:bg-[var(--ocean)]/5 shadow-sm active:scale-95 transition-all">
+    <div class="flex flex-col sm:flex-row items-center gap-3 w-full sm:w-auto">
+      <button type="button" onclick="downloadPDF()" class="w-full sm:w-auto bg-white text-[var(--ocean-dark)] border border-[var(--line)] text-sm font-semibold py-2.5 px-5 rounded-xl hover:bg-[var(--paper)] hover:border-[var(--ocean)] shadow-xs active:scale-[0.98] transition-all cursor-pointer">
         Download PDF
       </button>
-      <button type="button" id="submitBtn" onclick="submitProfile()" class="w-full sm:w-auto bg-[var(--coral)] text-white text-sm font-semibold py-2.5 px-6 rounded-lg hover:bg-[#D0603D] shadow-sm active:scale-95 transition-all disabled:opacity-60">
+      <button type="button" id="submitBtn" onclick="submitProfile()" class="w-full sm:w-auto bg-[var(--ocean)] text-white text-sm font-semibold py-2.5 px-6 rounded-xl hover:bg-[var(--ocean-dark)] shadow-sm active:scale-[0.98] transition-all cursor-pointer">
         Submit Profile
       </button>
     </div>
   </div>
-  <p id="submitStatus" class="max-w-7xl mx-auto text-xs mt-2 hidden"></p>
+  <div class="max-w-7xl mx-auto hidden" id="statusWrapper">
+    <p id="submitStatus" class="text-xs mt-2.5 px-3 py-2 rounded-lg font-medium inline-block w-full sm:w-auto"></p>
+  </div>
 </header>
 
-<main class="flex-1 max-w-7xl w-full mx-auto p-4 md:p-6 grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+<main class="flex-1 max-w-7xl w-full mx-auto p-4 md:p-6 grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
 
-  <!-- FORM -->
-  <div class="lg:col-span-6 xl:col-span-5 bg-white p-5 rounded-2xl border border-[var(--line)] shadow-sm space-y-7 max-h-none lg:max-h-[calc(100vh-7rem)] lg:overflow-y-auto custom-scrollbar no-print">
+  <!-- STEP 1: FORM DASHBOARD -->
+  <div class="lg:col-span-5 bg-white p-6 rounded-2xl border border-[var(--line)] shadow-xs space-y-6 max-h-none lg:max-h-[calc(100vh-7.5rem)] lg:overflow-y-auto custom-scrollbar no-print">
     <div>
-      <p class="section-eyebrow">Section 1</p>
-      <h2 class="font-display text-lg font-semibold text-[var(--ink)]">Primary Information</h2>
-      <p class="text-xs text-gray-500 mt-1">This mirrors the official Ormoc Stake YSA Profiling form — fill it out and your record renders on the right as a printable profile card.</p>
+      <p class="section-eyebrow">Dashboard</p>
+      <h2 class="font-display text-xl font-semibold text-[var(--ink)]">Profile Editor</h2>
+      <p class="text-xs text-gray-400 mt-1">Changes are instantly rendered onto the printable sheet layout on the right.</p>
     </div>
 
-    <form id="cvForm" class="space-y-7">
-
-      <!-- SECTION 1 -->
-      <div class="space-y-3">
+    <form id="cvForm" class="space-y-5" onsubmit="event.preventDefault();">
+      <div class="space-y-4">
+        <h3 class="font-mono text-[10px] font-bold tracking-widest text-gray-400 uppercase">Primary Info</h3>
+        
         <div>
           <label class="field-label">Individual Picture</label>
-          <p class="text-[11px] text-gray-400 mb-1">Recent photo, Sunday attire or any decent attire, face clearly visible.</p>
-          <input type="file" id="inputPhoto" accept="image/*" class="w-full text-xs p-1.5 border border-[var(--line)] rounded-lg file:mr-3 file:py-1.5 file:px-3 file:rounded-md file:border-0 file:text-xs file:font-semibold file:bg-[var(--ocean)]/10 file:text-[var(--ocean-dark)] hover:file:bg-[var(--ocean)]/20 transition">
+          <div class="mt-1 flex items-center justify-center border border-dashed border-[var(--line)] rounded-xl p-4 bg-[var(--paper)] hover:bg-white hover:border-[var(--ocean)] transition group relative cursor-pointer">
+            <input type="file" id="inputPhoto" accept="image/*" class="absolute inset-0 opacity-0 cursor-pointer w-full h-full z-10">
+            <div class="text-center pointer-events-none">
+              <span class="text-xs font-medium text-[var(--ocean)] group-hover:underline">Choose an image asset</span>
+              <p class="text-[10px] text-gray-400 mt-0.5">Formal or decent modern portrait style</p>
+            </div>
+          </div>
         </div>
+
         <div>
           <label class="field-label">Full Name</label>
           <input type="text" id="inputName" placeholder="Last Name, First Name, M.I." class="field-input mt-1">
         </div>
+
         <div class="grid grid-cols-2 gap-3">
           <div>
             <label class="field-label">Birthdate</label>
             <input type="date" id="inputBirthdate" class="field-input mt-1">
           </div>
           <div>
-            <label class="field-label">Member Record No.</label>
+            <label class="field-label">Member Record No. (MRN)</label>
             <input type="text" id="inputRecordNum" placeholder="000-0000-0000" class="field-input mt-1 font-mono">
           </div>
         </div>
+
         <div>
           <label class="field-label">Ward / Unit</label>
-          <select id="inputWard" class="field-input mt-1">
+          <select id="inputWard" class="field-input mt-1 appearance-none bg-[url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%23708090%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2s%3E%3C%2Fsvg%3E')] bg-[length:10px_auto] bg-[right_1rem_center] bg-no-repeat pr-8">
             <option value="">Select Ward</option>
             <option>Ormoc 1st Ward</option>
             <option>Ormoc 2nd Ward</option>
@@ -121,28 +152,33 @@
             <option>Kananga Ward</option>
           </select>
         </div>
+
         <div>
-          <label class="field-label">Contact Number / Messenger</label>
-          <input type="text" id="inputContact" placeholder="Mobile # or FB Messenger link" class="field-input mt-1">
+          <label class="field-label">Home Address</label>
+          <input type="text" id="inputAddress" placeholder="Barangay, City/Municipality, Province" class="field-input mt-1">
         </div>
+
+        <div>
+          <label class="field-label">Contact Info / Messenger Link</label>
+          <input type="text" id="inputContact" placeholder="Mobile number or facebook profile path" class="field-input mt-1">
+        </div>
+
         <div>
           <label class="field-label">Gender</label>
           <div class="grid grid-cols-2 gap-2 mt-1">
-            <label class="radio-row"><input type="radio" name="gender" value="Sister" id="genderSister"> Sister</label>
-            <label class="radio-row"><input type="radio" name="gender" value="Brother" id="genderBrother"> Brother</label>
+            <label class="radio-row" id="lblSister"><input type="radio" name="gender" value="Sister" id="genderSister"> Sister</label>
+            <label class="radio-row" id="lblBrother"><input type="radio" name="gender" value="Brother" id="genderBrother"> Brother</label>
           </div>
         </div>
       </div>
 
       <div class="perforation"></div>
 
-      <!-- SECTION 2 — Covenant Status & Church Service -->
-      <div class="space-y-3">
-        <p class="section-eyebrow">Section 2</p>
-        <h3 class="font-display text-base font-semibold text-[var(--ink)] -mt-1">Covenant Status &amp; Church Service</h3>
-
-        <div id="priesthoodField" class="hidden">
-          <label class="field-label">Priesthood Held</label>
+      <div class="space-y-4">
+        <h3 class="font-mono text-[10px] font-bold tracking-widest text-gray-400 uppercase">Spiritual & Service</h3>
+        
+        <div id="priesthoodField" class="collapsible-section">
+          <label class="field-label">Priesthood Office Held</label>
           <div class="space-y-2 mt-1">
             <label class="radio-row"><input type="radio" name="priesthood" value="Aaronic Priesthood (Deacon / Teacher / Priest)"> Aaronic Priesthood (Deacon / Teacher / Priest)</label>
             <label class="radio-row"><input type="radio" name="priesthood" value="Melchizedek Priesthood (Elder)"> Melchizedek Priesthood (Elder)</label>
@@ -152,9 +188,8 @@
 
         <div>
           <label class="field-label">Covenant Milestones</label>
-          <p class="text-[11px] text-gray-400 mb-1">Select all that apply.</p>
-          <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
-            <label class="chip-check"><input type="checkbox" name="milestone" value="Has Current Temple Recommend"> Has Current Temple Recommend (Limited-Use or Regular)</label>
+          <div class="grid grid-cols-1 gap-2 mt-1">
+            <label class="chip-check"><input type="checkbox" name="milestone" value="Has Current Temple Recommend"> Has Current Temple Recommend</label>
             <label class="chip-check"><input type="checkbox" name="milestone" value="Endowed"> Endowed</label>
             <label class="chip-check"><input type="checkbox" name="milestone" value="Returned Missionary (RM)"> Returned Missionary (RM)</label>
           </div>
@@ -162,49 +197,45 @@
 
         <div>
           <label class="field-label">Current Church Calling(s)</label>
-          <input type="text" id="inputCalling" placeholder="e.g., Ward YSA Representative — type &quot;None&quot; if none" class="field-input mt-1">
+          <input type="text" id="inputCalling" placeholder="Type &quot;None&quot; if currently without assignment" class="field-input mt-1">
         </div>
       </div>
 
       <div class="perforation"></div>
 
-      <!-- SECTION 3 — Personal Interests & Spiritual Foundation -->
-      <div class="space-y-3">
-        <p class="section-eyebrow">Section 3</p>
-        <h3 class="font-display text-base font-semibold text-[var(--ink)] -mt-1">Personal Interests &amp; Spiritual Foundation</h3>
-
+      <div class="space-y-4">
+        <h3 class="font-mono text-[10px] font-bold tracking-widest text-gray-400 uppercase">Background & Interests</h3>
+        
         <div>
-          <label class="field-label">Tell Us About Yourself</label>
-          <p class="text-[11px] text-gray-400 mb-1">A short intro — who you are, what you're up to these days, anything you'd like the YSA family to know.</p>
-          <textarea id="inputAboutMe" rows="4" placeholder="Share a bit about yourself..." class="field-input mt-1"></textarea>
+          <label class="field-label">Brief Biography</label>
+          <textarea id="inputAboutMe" rows="4" placeholder="Share a brief overview of who you are, your current focuses, or short-term personal goals..." class="field-input mt-1 custom-scrollbar resize-none"></textarea>
         </div>
 
         <div>
           <label class="field-label">Spiritual Anchor</label>
-          <p class="text-[11px] text-gray-400 mb-1">Favorite scripture, or an inspiring quote/talk from General Conference.</p>
-          <textarea id="inputAnchor" rows="3" placeholder="Share your favorite scripture or quote..." class="field-input mt-1"></textarea>
+          <textarea id="inputAnchor" rows="3" placeholder="Favorite scripture block, or foundational prophetic counsel..." class="field-input mt-1 custom-scrollbar resize-none"></textarea>
         </div>
 
         <div>
-          <label class="field-label">Hobbies &amp; Interests</label>
-          <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 mt-1">
-            <label class="chip-check"><input type="checkbox" name="hobby" value="Music / Guitar / Playing Instruments"> Music / Guitar / Playing Instruments</label>
-            <label class="chip-check"><input type="checkbox" name="hobby" value="Creative Photography / Videography"> Creative Photography / Videography</label>
-            <label class="chip-check"><input type="checkbox" name="hobby" value="Sports (Basketball, Volleyball, Badminton, etc.)"> Sports (Basketball, Volleyball, Badminton, etc.)</label>
-            <label class="chip-check"><input type="checkbox" name="hobby" value="Cooking / Baking"> Cooking / Baking</label>
-            <label class="chip-check"><input type="checkbox" name="hobby" value="Reading / Writing"> Reading / Writing</label>
-            <label class="chip-check"><input type="checkbox" name="hobby" value="Art / Drawing / Design"> Art / Drawing / Design</label>
+          <label class="field-label">Hobbies & Fields of Interest</label>
+          <div class="grid grid-cols-1 gap-1.5 mt-1">
+            <label class="chip-check"><input type="checkbox" name="hobby" value="Music / Guitar / Playing Instruments"> Music & Playing Instruments</label>
+            <label class="chip-check"><input type="checkbox" name="hobby" value="Creative Photography / Videography"> Media Production & Photography</label>
+            <label class="chip-check"><input type="checkbox" name="hobby" value="Sports (Basketball, Volleyball, Badminton, etc.)"> Athletics & Active Sports</label>
+            <label class="chip-check"><input type="checkbox" name="hobby" value="Cooking / Baking"> Culinary Arts / Cooking</label>
+            <label class="chip-check"><input type="checkbox" name="hobby" value="Reading / Writing"> Literature & Creative Writing</label>
+            <label class="chip-check"><input type="checkbox" name="hobby" value="Art / Drawing / Design"> Graphic Design & Visual Arts</label>
           </div>
-          <input type="text" id="inputHobbyOther" placeholder="Other (please specify)" class="field-input mt-2">
+          <input type="text" id="inputHobbyOther" placeholder="Other specific interests (comma separated)" class="field-input mt-2">
         </div>
 
         <div>
-          <label class="field-label">Favorite Food / Comfort Food</label>
-          <input type="text" id="inputFood" placeholder="Your go-to comfort food or favorite treat" class="field-input mt-1">
+          <label class="field-label">Favorite Food / Comfort Treat</label>
+          <input type="text" id="inputFood" placeholder="Your favorite culinary comfort choice" class="field-input mt-1">
         </div>
 
         <div>
-          <label class="field-label">Temporal Status</label>
+          <label class="field-label">Temporal Engagement Status</label>
           <div class="grid grid-cols-3 gap-2 mt-1">
             <label class="radio-row"><input type="radio" name="status" value="Student"> Student</label>
             <label class="radio-row"><input type="radio" name="status" value="Employed"> Employed</label>
@@ -213,97 +244,118 @@
         </div>
 
         <div>
-          <label class="field-label">Course / Major</label>
-          <p class="text-[11px] text-gray-400 mb-1">If currently a student. Leave blank or type N/A if not.</p>
-          <input type="text" id="inputMajor" placeholder="e.g., BS Information Technology" class="field-input mt-1">
+          <label class="field-label">Academic Program / Major Discipline</label>
+          <input type="text" id="inputMajor" placeholder="e.g., BS Information Technology (Leave blank if N/A)" class="field-input mt-1">
         </div>
       </div>
     </form>
   </div>
 
-  <!-- LIVE PREVIEW -->
-  <div class="lg:col-span-6 xl:col-span-7 lg:sticky lg:top-[6rem] w-full flex justify-center max-h-none lg:max-h-[calc(100vh-7rem)] lg:overflow-y-auto custom-scrollbar p-1">
-    <div id="cvPreview" class="p-6 sm:p-8 rounded-xl shadow-md border border-[var(--line)] w-full max-w-[210mm] min-h-[297mm] flex flex-col justify-between box-border overflow-hidden">
+  <!-- STEP 2: CANVAS SHEET PREVIEW -->
+  <div class="lg:col-span-7 lg:sticky lg:top-[5.5rem] w-full flex flex-col items-center gap-4 max-h-none lg:max-h-[calc(100vh-7.5rem)] lg:overflow-y-auto custom-scrollbar p-1">
+    <div class="w-full max-w-[210mm] text-left">
+      <p class="section-eyebrow">Document View</p>
+      <h2 class="font-display text-xl font-semibold text-[var(--ink)]">Live Sheet Output</h2>
+    </div>
 
+    <!-- Printable Card Render Element -->
+    <div id="cvPreview" class="p-8 sm:p-10 rounded-2xl shadow-xl border border-[var(--line)] w-full max-w-[210mm] min-h-[297mm] flex flex-col justify-between box-border overflow-hidden bg-white select-none">
       <div class="space-y-6">
-        <!-- Header -->
-        <div class="flex flex-row items-start gap-4 sm:gap-5">
+        
+        <!-- Header Compound Layout -->
+        <div class="flex flex-row items-start gap-5 sm:gap-6">
           <div class="flex-shrink-0">
-            <div class="w-20 h-24 sm:w-24 sm:h-28 bg-[#F1F5F4] border border-[var(--line)] rounded-lg overflow-hidden flex items-center justify-center relative">
-              <img id="previewPhoto" src="" class="w-full h-full object-cover hidden" alt="Profile Picture">
-              <div id="photoPlaceholderText" class="text-center p-2 text-[10px] font-mono text-gray-400">PHOTO</div>
+            <div class="w-24 h-28 sm:w-28 sm:h-32 bg-[var(--paper)] border border-[var(--line)] rounded-xl overflow-hidden flex items-center justify-center relative shadow-inner">
+              <img id="previewPhoto" src="" class="w-full h-full object-cover hidden" alt="Profile Asset">
+              <div id="photoPlaceholderText" class="text-center p-3 text-[9px] font-mono tracking-wider text-gray-400">PASSPORT<br>IMAGE</div>
             </div>
           </div>
-          <div class="flex-1 min-w-0 flex justify-between items-start gap-3">
-            <div>
-              <p class="section-eyebrow" id="previewGenderTag">Covenant Profile</p>
-              <h2 id="previewName" class="font-display text-xl sm:text-3xl font-semibold text-[var(--ink)] leading-tight break-words">Your Full Name</h2>
-              <p id="previewSub" class="text-[var(--ocean)] text-[10px] sm:text-[11px] font-mono tracking-wide mt-1">ORMOC STAKE · YSA RECORD</p>
+          <div class="flex-1 min-w-0 flex justify-between items-start gap-4">
+            <div class="space-y-1">
+              <p class="section-eyebrow text-[9.5px] tracking-widest text-[var(--coral)]" id="previewGenderTag">Covenant Profile</p>
+              <h2 id="previewName" class="font-display text-2xl sm:text-3xl font-bold text-[var(--ink)] tracking-tight leading-none break-words">Your Full Name</h2>
+              <p id="previewSub" class="text-[var(--ocean)] text-[10px] font-mono tracking-widest font-semibold pt-1">ORMOC STAKE · YSA REGISTRY</p>
             </div>
-            <!-- Logo signature element -->
-            <img id="sealLogoImg" src="https://www.image2url.com/r2/default/images/1783492977908-c333b85e-dc1c-4af9-a18e-35bc4182f82c.png" crossorigin="anonymous" class="seal-logo" alt="Ormoc Stake YSA emblem" onerror="this.style.display='none'">
+            <img id="sealLogoImg" src="https://www.image2url.com/r2/default/images/1783492977908-c333b85e-dc1c-4af9-a18e-35bc4182f82c.png" crossorigin="anonymous" class="seal-logo" alt="Stake Emblem" onerror="this.style.display='none'">
           </div>
         </div>
 
-        <div class="flex justify-between items-center text-[10px] sm:text-[11px] font-mono text-gray-500 border-b border-[var(--line)] pb-3">
-          <span id="previewWard">WARD: —</span>
-          <span id="previewRecord">MRN: —</span>
+        <!-- Meta Structural Strip -->
+        <div class="flex justify-between items-center text-[10px] font-mono font-semibold text-gray-400 border-b border-[var(--line)] pb-3">
+          <span id="previewWard" class="tracking-wider">WARD: —</span>
+          <span id="previewRecord" class="tracking-wider">MRN: —</span>
         </div>
 
-        <!-- Body -->
-        <div class="grid grid-cols-1 sm:grid-cols-3 gap-6">
-          <div class="col-span-1 sm:border-r border-[var(--line)] sm:pr-4 space-y-4 text-xs text-gray-600">
+        <!-- Primary Structured Grid Split -->
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-8">
+          
+          <!-- Column 1: Core Parameters & Meta -->
+          <div class="col-span-1 sm:border-r border-[var(--line)] sm:pr-6 space-y-5 text-xs text-gray-600">
             <div>
               <h4 class="section-eyebrow !text-[var(--ocean-dark)] mb-1">Contact</h4>
-              <p id="previewContact" class="break-all">—</p>
+              <p id="previewContact" class="break-all font-medium text-gray-800">—</p>
             </div>
+            
             <div>
-              <h4 class="section-eyebrow !text-[var(--ocean-dark)] mb-1">Personal Stats</h4>
-              <p class="mt-0.5"><strong>Born:</strong> <span id="previewBirthdate">—</span></p>
-              <p class="mt-0.5"><strong>Status:</strong> <span id="previewStatusText">—</span></p>
-              <p class="mt-0.5"><strong>Course/Major:</strong> <span id="previewMajorText">—</span></p>
+              <h4 class="section-eyebrow !text-[var(--ocean-dark)] mb-1">Home Address</h4>
+              <p id="previewAddress" class="break-words font-medium text-gray-800 leading-relaxed">—</p>
             </div>
+            
+            <div>
+              <h4 class="section-eyebrow !text-[var(--ocean-dark)] mb-1">Personal Metrics</h4>
+              <div class="space-y-1 mt-1 text-gray-700">
+                <p><strong>Born:</strong> <span id="previewBirthdate" class="font-medium text-gray-900">—</span></p>
+                <p><strong>Status:</strong> <span id="previewStatusText" class="font-medium text-gray-900">—</span></p>
+                <p><strong>Major:</strong> <span id="previewMajorText" class="font-medium text-gray-900">—</span></p>
+              </div>
+            </div>
+            
             <div>
               <h4 class="section-eyebrow !text-[var(--ocean-dark)] mb-1">Comfort Food</h4>
-              <p id="previewFood" class="break-words">—</p>
+              <p id="previewFood" class="break-words font-medium text-gray-800">—</p>
             </div>
+            
             <div>
               <h4 class="section-eyebrow !text-[var(--ocean-dark)] mb-1">Hobbies</h4>
-              <div id="previewHobbies" class="flex flex-wrap gap-1 mt-1">—</div>
+              <div id="previewHobbies" class="flex flex-wrap gap-1 mt-1.5">—</div>
             </div>
           </div>
 
-          <div class="col-span-1 sm:col-span-2 space-y-5 text-sm">
+          <!-- Column 2 & 3: Deep Context Profiles -->
+          <div class="col-span-1 sm:col-span-2 space-y-6 text-sm">
             <div>
-              <h3 class="section-eyebrow mb-1">About Me</h3>
-              <p id="previewAboutMe" class="text-gray-700 text-xs leading-relaxed break-words">—</p>
+              <h3 class="section-eyebrow mb-1.5">About Me</h3>
+              <p id="previewAboutMe" class="text-gray-700 text-xs leading-relaxed break-words font-normal">—</p>
             </div>
 
-            <div id="previewAnchorBlock" class="bg-[var(--ocean)]/5 p-3 rounded-lg border-l-4 border-[var(--ocean)] italic font-display text-[13px] text-gray-700 break-words">
-              "Your favorite scripture or quote will render here."
+            <div id="previewAnchorBlock" class="bg-[var(--paper)] p-4 rounded-xl border-l-4 border-[var(--ocean)] italic font-display text-[13.5px] text-gray-700 break-words shadow-xs">
+              "Your specified spiritual anchor quote or scripture text will render inside this container."
             </div>
 
             <div>
-              <h3 class="section-eyebrow mb-1.5">Covenant Milestones</h3>
+              <h3 class="section-eyebrow mb-2">Covenant Milestones</h3>
               <div id="previewMilestones" class="flex flex-wrap gap-1.5">—</div>
             </div>
 
             <div id="previewPriesthoodBlock" class="hidden">
-              <h3 class="section-eyebrow mb-1">Priesthood Held</h3>
-              <p class="text-gray-900 text-xs" id="previewPriesthoodText">—</p>
+              <h3 class="section-eyebrow mb-1.5">Priesthood Office Held</h3>
+              <p class="text-gray-800 font-medium text-xs tracking-wide" id="previewPriesthoodText">—</p>
             </div>
 
             <div>
-              <h3 class="section-eyebrow mb-1">Church Service Record</h3>
-              <p class="text-gray-900 text-xs break-words" id="previewCallingText">—</p>
+              <h3 class="section-eyebrow mb-1.5">Church Service Record</h3>
+              <p class="text-gray-800 font-medium text-xs break-words" id="previewCallingText">—</p>
             </div>
           </div>
         </div>
       </div>
 
-      <div class="perforation mt-8"></div>
-      <div class="pt-1 text-center">
-        <p class="font-mono text-[9px] text-gray-400 tracking-[0.25em] uppercase">Ormoc Stake Young Single Adults Organization</p>
+      <!-- Footer Branding Component -->
+      <div class="space-y-3 mt-12">
+        <div class="perforation"></div>
+        <div class="text-center">
+          <p class="font-mono text-[8.5px] text-gray-400 tracking-[0.3em] uppercase font-medium">Ormoc Stake Young Single Adults Organization</p>
+        </div>
       </div>
     </div>
   </div>
@@ -314,6 +366,7 @@
 
   function textOrDash(v){ return v && v.trim() ? v.trim() : '—'; }
 
+  // High-performance live renderer syncing model elements to DOM nodes
   function render(){
     const name = document.getElementById('inputName').value;
     document.getElementById('previewName').textContent = textOrDash(name) === '—' ? 'Your Full Name' : name;
@@ -328,6 +381,7 @@
     document.getElementById('previewRecord').textContent = 'MRN: ' + textOrDash(mrn);
 
     document.getElementById('previewContact').textContent = textOrDash(document.getElementById('inputContact').value);
+    document.getElementById('previewAddress').textContent = textOrDash(document.getElementById('inputAddress').value);
     document.getElementById('previewFood').textContent = textOrDash(document.getElementById('inputFood').value);
 
     const status = document.querySelector('input[name="status"]:checked');
@@ -337,49 +391,55 @@
     document.getElementById('previewAboutMe').textContent = textOrDash(document.getElementById('inputAboutMe').value);
 
     const anchor = document.getElementById('inputAnchor').value;
-    document.getElementById('previewAnchorBlock').textContent = anchor.trim() ? '"' + anchor.trim() + '"' : 'Your favorite scripture or quote will render here.';
+    document.getElementById('previewAnchorBlock').textContent = anchor.trim() ? '"' + anchor.trim() + '"' : 'Your specified spiritual anchor quote or scripture text will render inside this container.';
 
     document.getElementById('previewCallingText').textContent = textOrDash(document.getElementById('inputCalling').value);
 
-    // Gender / priesthood branching
+    // Dynamic UI states handling depending on gender assignments
     const gender = document.querySelector('input[name="gender"]:checked');
     const priesthoodField = document.getElementById('priesthoodField');
     const priesthoodBlock = document.getElementById('previewPriesthoodBlock');
     const genderTag = document.getElementById('previewGenderTag');
 
+    // UI background feedback styling rules updates
+    document.getElementById('lblSister').style.borderColor = (gender && gender.value === 'Sister') ? 'var(--coral)' : 'var(--line)';
+    document.getElementById('lblBrother').style.borderColor = (gender && gender.value === 'Brother') ? 'var(--coral)' : 'var(--line)';
+
     if(gender && gender.value === 'Brother'){
-      priesthoodField.classList.remove('hidden');
+      priesthoodField.classList.add('show');
       priesthoodBlock.classList.remove('hidden');
       genderTag.textContent = 'Covenant Profile · Brother';
       const p = document.querySelector('input[name="priesthood"]:checked');
       document.getElementById('previewPriesthoodText').textContent = p ? p.value : '—';
-    } else if(gender && gender.value === 'Sister'){
-      priesthoodField.classList.add('hidden');
+    } else if(gender && gender.value === 'Sister') {
+      priesthoodField.classList.remove('show');
       priesthoodBlock.classList.add('hidden');
       genderTag.textContent = 'Covenant Profile · Sister';
     } else {
-      priesthoodField.classList.add('hidden');
+      priesthoodField.classList.remove('show');
       priesthoodBlock.classList.add('hidden');
       genderTag.textContent = 'Covenant Profile';
     }
 
-    // Milestones -> pills
+    // Milestones dynamic block rendering
     const milestones = Array.from(document.querySelectorAll('input[name="milestone"]:checked')).map(el => el.value);
     const msEl = document.getElementById('previewMilestones');
     if(milestones.length === 0){
-      msEl.innerHTML = '<span class="text-gray-400 text-xs">—</span>';
+      msEl.innerHTML = '<span class="text-gray-400 text-xs font-normal">—</span>';
     } else {
       const colors = ['pill-ocean','pill-gold','pill-coral'];
       msEl.innerHTML = milestones.map((m,i) => `<span class="pill ${colors[i % colors.length]}">${m}</span>`).join('');
     }
 
-    // Hobbies -> pills
+    // Hobbies tracking dynamic block rendering
     const hobbies = Array.from(document.querySelectorAll('input[name="hobby"]:checked')).map(el => el.value);
     const other = document.getElementById('inputHobbyOther').value.trim();
-    if(other) hobbies.push(other);
+    if(other) {
+      other.split(',').forEach(item => { if(item.trim()) hobbies.push(item.trim()); });
+    }
     const hbEl = document.getElementById('previewHobbies');
     if(hobbies.length === 0){
-      hbEl.innerHTML = '<span class="text-gray-400 text-xs">—</span>';
+      hbEl.innerHTML = '<span class="text-gray-400 text-xs font-normal">—</span>';
     } else {
       hbEl.innerHTML = hobbies.map(h => `<span class="pill pill-ocean">${h}</span>`).join('');
     }
@@ -388,6 +448,7 @@
   form.addEventListener('input', render);
   form.addEventListener('change', render);
 
+  // File loading mechanism rules architecture
   document.getElementById('inputPhoto').addEventListener('change', function(e){
     const file = e.target.files[0];
     const preview = document.getElementById('previewPhoto');
@@ -414,19 +475,14 @@
 
   function pdfOptions(filename){
     return {
-      margin: [0.4,0.4,0.4,0.4],
+      margin: [0.35, 0.35, 0.35, 0.35],
       filename: filename,
-      image: { type:'jpeg', quality:0.98 },
-      html2canvas: { scale:2, useCORS:true, letterRendering:true },
-      jsPDF: { unit:'in', format:'letter', orientation:'portrait' }
+      image: { type: 'jpeg', quality: 0.98 },
+      html2canvas: { scale: 2, useCORS: true, letterRendering: true },
+      jsPDF: { unit: 'in', format: 'letter', orientation: 'portrait' }
     };
   }
 
-  // Resilient PDF export: if the external logo image blocks html2canvas
-  // (e.g. the image host doesn't send CORS headers, "tainting" the canvas),
-  // this automatically retries once with the logo hidden so the export
-  // never silently fails. mode: 'save' writes directly to disk; 'blob'
-  // returns a data URI (used by submitProfile for the Drive upload).
   async function exportPdf(mode){
     const element = document.getElementById('cvPreview');
     const filename = buildFilename();
@@ -440,7 +496,7 @@
     try {
       return await run();
     } catch(err){
-      console.warn('PDF export failed (likely the logo image blocked the canvas). Retrying without the logo:', err);
+      console.warn('PDF compiler caught edge case logic execution roadblock. Falling back...', err);
       const hadLogo = logoImg && logoImg.style.visibility !== 'hidden';
       if(logoImg) logoImg.style.visibility = 'hidden';
       try {
@@ -455,36 +511,35 @@
     try {
       await exportPdf('save');
     } catch(err){
-      alert('PDF export failed: ' + err.message + '. Please try again, or contact the site admin if this keeps happening.');
+      alert('PDF download compiler context generation fault: ' + err.message);
     }
   }
 
-  // ── Submit to Google Drive ──────────────────────────────────────────
-  // Apps Script Web App deployment URL (public Drive folder).
   const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyUXyL8vGFrSIPqf6fy2XkA2Uqj9Ddq9M4Q3KK0F4KhQTaeuPX-jU7flCOO_d9vISOskQ/exec';
 
   async function submitProfile(){
+    const statusWrapper = document.getElementById('statusWrapper');
     const statusEl = document.getElementById('submitStatus');
     const btn = document.getElementById('submitBtn');
 
     if(!APPS_SCRIPT_URL || APPS_SCRIPT_URL.indexOf('PASTE_YOUR') === 0){
-      statusEl.textContent = 'Submit-to-Drive isn\'t configured yet — the site owner needs to add the Apps Script URL. You can still use Download PDF.';
-      statusEl.className = 'max-w-7xl mx-auto text-xs mt-2 text-[var(--coral)]';
-      statusEl.classList.remove('hidden');
+      statusWrapper.classList.remove('hidden');
+      statusEl.textContent = 'Submit-to-Drive tracking infrastructure is unconfigured.';
+      statusEl.className = 'text-xs mt-2 text-[var(--coral)] bg-red-50 px-3 py-2 rounded-lg font-medium w-full';
       return;
     }
 
     const name = document.getElementById('inputName').value.trim();
     if(!name){
-      statusEl.textContent = 'Please enter your full name before submitting.';
-      statusEl.className = 'max-w-7xl mx-auto text-xs mt-2 text-[var(--coral)]';
-      statusEl.classList.remove('hidden');
+      statusWrapper.classList.remove('hidden');
+      statusEl.textContent = 'Validation error: "Full Name" is a mandatory field to sync metadata before submission tracking.';
+      statusEl.className = 'text-xs mt-2 text-[var(--coral)] bg-red-50 px-3 py-2 rounded-lg font-medium w-full';
       return;
     }
 
     btn.disabled = true;
-    btn.textContent = 'Submitting…';
-    statusEl.classList.add('hidden');
+    btn.textContent = 'Processing Data Pipeline...';
+    statusWrapper.classList.add('hidden');
 
     try {
       const filename = buildFilename();
@@ -493,30 +548,30 @@
 
       const response = await fetch(APPS_SCRIPT_URL, {
         method: 'POST',
-        headers: { 'Content-Type': 'text/plain;charset=utf-8' }, // avoids CORS preflight on Apps Script
+        headers: { 'Content-Type': 'text/plain;charset=utf-8' },
         body: JSON.stringify({ filename: filename, pdfBase64: base64 })
       });
       const result = await response.json();
 
-      if(result.status === 'success'){
-        btn.textContent = 'Submitted ✓';
-        statusEl.textContent = 'Your profile was saved to the stake Drive folder. Thank you!';
-        statusEl.className = 'max-w-7xl mx-auto text-xs mt-2 text-[var(--ocean-dark)]';
-        statusEl.classList.remove('hidden');
+      statusWrapper.classList.remove('hidden');
+      if(result.status === 'success') {
+        btn.textContent = 'Submitted Successfully ✓';
+        statusEl.textContent = 'Success! Your document was compiled and securely filed into the Stake YSA database system.';
+        statusEl.className = 'text-xs mt-2 text-[var(--ocean-dark)] bg-emerald-50 border border-emerald-200/60 px-3 py-2 rounded-lg font-medium w-full';
       } else {
-        throw new Error(result.message || 'Unknown error');
+        throw new Error(result.message || 'Remote tracking system transmission generic processing fault.');
       }
     } catch(err){
       btn.textContent = 'Submit Profile';
-      statusEl.textContent = 'Submission failed (' + err.message + '). Please try Download PDF and send it manually instead.';
-      statusEl.className = 'max-w-7xl mx-auto text-xs mt-2 text-[var(--coral)]';
-      statusEl.classList.remove('hidden');
+      statusWrapper.classList.remove('hidden');
+      statusEl.textContent = 'Data channel transmission failed (' + err.message + '). Please hit "Download PDF" to save it manually instead.';
+      statusEl.className = 'text-xs mt-2 text-[var(--coral)] bg-red-50 px-3 py-2 rounded-lg font-medium w-full';
     } finally {
       btn.disabled = false;
-      if(btn.textContent === 'Submitting…') btn.textContent = 'Submit Profile';
     }
   }
 
+  // Init sequence mapping
   render();
 </script>
 </body>
