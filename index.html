@@ -241,7 +241,7 @@
               <p id="previewSub" class="text-[var(--ocean)] text-[10px] sm:text-[11px] font-mono tracking-wide mt-1">ORMOC STAKE · YSA RECORD</p>
             </div>
             <!-- Logo signature element -->
-<img src="https://www.image2url.com/r2/default/images/1783492977908-c333b85e-dc1c-4af9-a18e-35bc4182f82c.png" alt="image" class="seal-logo" alt="Ormoc Stake YSA emblem">
+            <img id="sealLogoImg" src="https://www.image2url.com/r2/default/images/1783492977908-c333b85e-dc1c-4af9-a18e-35bc4182f82c.png" crossorigin="anonymous" class="seal-logo" alt="Ormoc Stake YSA emblem" onerror="this.style.display='none'">
           </div>
         </div>
 
@@ -422,14 +422,46 @@
     };
   }
 
-  function downloadPDF(){
+  // Resilient PDF export: if the external logo image blocks html2canvas
+  // (e.g. the image host doesn't send CORS headers, "tainting" the canvas),
+  // this automatically retries once with the logo hidden so the export
+  // never silently fails. mode: 'save' writes directly to disk; 'blob'
+  // returns a data URI (used by submitProfile for the Drive upload).
+  async function exportPdf(mode){
     const element = document.getElementById('cvPreview');
-    html2pdf().set(pdfOptions(buildFilename())).from(element).save();
+    const filename = buildFilename();
+    const logoImg = document.getElementById('sealLogoImg');
+
+    async function run(){
+      const worker = html2pdf().set(pdfOptions(filename)).from(element);
+      return mode === 'save' ? worker.save() : worker.outputPdf('datauristring');
+    }
+
+    try {
+      return await run();
+    } catch(err){
+      console.warn('PDF export failed (likely the logo image blocked the canvas). Retrying without the logo:', err);
+      const hadLogo = logoImg && logoImg.style.visibility !== 'hidden';
+      if(logoImg) logoImg.style.visibility = 'hidden';
+      try {
+        return await run();
+      } finally {
+        if(hadLogo) logoImg.style.visibility = 'visible';
+      }
+    }
+  }
+
+  async function downloadPDF(){
+    try {
+      await exportPdf('save');
+    } catch(err){
+      alert('PDF export failed: ' + err.message + '. Please try again, or contact the site admin if this keeps happening.');
+    }
   }
 
   // ── Submit to Google Drive ──────────────────────────────────────────
   // Apps Script Web App deployment URL (public Drive folder).
-  const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbx-0tpak1jWgtdf0VmQfnshI9ge_hDw190b76ghKKaVKPqnSwTGkb8b0h7MuWcPOp408w/exec';
+  const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyUXyL8vGFrSIPqf6fy2XkA2Uqj9Ddq9M4Q3KK0F4KhQTaeuPX-jU7flCOO_d9vISOskQ/exec';
 
   async function submitProfile(){
     const statusEl = document.getElementById('submitStatus');
@@ -455,9 +487,8 @@
     statusEl.classList.add('hidden');
 
     try {
-      const element = document.getElementById('cvPreview');
       const filename = buildFilename();
-      const pdfDataUri = await html2pdf().set(pdfOptions(filename)).from(element).outputPdf('datauristring');
+      const pdfDataUri = await exportPdf('blob');
       const base64 = pdfDataUri.split(',')[1];
 
       const response = await fetch(APPS_SCRIPT_URL, {
