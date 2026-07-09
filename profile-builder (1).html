@@ -1,0 +1,604 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ormoc Stake YSA — Covenant Profile Builder</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght=0,9..144,300;0,9..144,400;0,9..144,500;0,9..144,600;1,9..144,400&family=Inter:wght@300;400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --ink: #111B1E;
+    --paper: #F6F8F7;
+    --ocean: #19565E;
+    --ocean-light: #E8F1F1;
+    --ocean-dark: #0F373D;
+    --coral: #DE5D35;
+    --coral-light: #FDF2EE;
+    --gold: #A37220;
+    --line: #E1E7E5;
+    --card: #FFFFFF;
+  }
+  
+  * { 
+    font-family: 'Inter', sans-serif; 
+    -webkit-font-smoothing: antialiased;
+  }
+  .font-display { font-family: 'Fraunces', serif; }
+  .font-mono { font-family: 'IBM Plex Mono', monospace; }
+  
+  body { background: var(--paper); color: var(--ink); }
+  @media print { .no-print { display:none !important; } }
+  
+  /* Scrollbar Aesthetics */
+  .custom-scrollbar::-webkit-scrollbar { width: 6px; height: 6px; }
+  .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
+  .custom-scrollbar::-webkit-scrollbar-thumb { background: #CBDCDA; border-radius: 8px; }
+  .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: #A4C1BE; }
+
+  /* Premium Form Controls */
+  .field-label { font-family: 'IBM Plex Mono', monospace; font-size: 10px; letter-spacing: .08em; text-transform: uppercase; color: var(--ocean-dark); font-weight: 600; }
+  .field-input { width: 100%; font-size: 13.5px; padding: .65rem .8rem; border: 1px solid var(--line); border-radius: .6rem; background: #fff; outline: none; transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1); color: var(--ink); }
+  .field-input:focus { border-color: var(--ocean); box-shadow: 0 0 0 4px rgba(25, 86, 94, 0.08); }
+  .section-eyebrow { font-family: 'IBM Plex Mono', monospace; font-size: 10.5px; letter-spacing: .15em; text-transform: uppercase; color: var(--coral); font-weight: 600; }
+  
+  /* Modern Interactive Chips */
+  .chip-check { display: flex; align-items: flex-start; gap: .6rem; font-size: 13px; padding: .6rem .75rem; border: 1px solid var(--line); border-radius: .6rem; cursor: pointer; transition: all 0.15s ease; background: #fff; position: relative; user-select: none; }
+  .chip-check:hover { border-color: var(--ocean); background: rgba(25, 86, 94, 0.01); }
+  .chip-check has-(:checked) { border-color: var(--ocean); background: var(--ocean-light); }
+  .chip-check input { accent-color: var(--ocean); margin-top: 3px; width: 15px; height: 15px; }
+  
+  .radio-row { display: flex; align-items: center; gap: .5rem; font-size: 13.5px; padding: .6rem .75rem; border: 1px solid var(--line); border-radius: .6rem; cursor: pointer; transition: all 0.15s ease; background: #fff; user-select: none; }
+  .radio-row:hover { border-color: var(--coral); background: rgba(222, 93, 53, 0.01); }
+  .radio-row has-(:checked) { border-color: var(--coral); background: var(--coral-light); }
+  .radio-row input { accent-color: var(--coral); width: 15px; height: 15px; }
+
+  .perforation { position: relative; height: 1px; background: repeating-linear-gradient(90deg, var(--line) 0 6px, transparent 6px 12px); margin: 1.5rem 0; }
+
+  /* Preview Canvas Styling */
+  #cvPreview { background: var(--card); position: relative; transition: transform 0.2s ease; }
+  #cvPreview::before { content: ""; position: absolute; top: 0; left: 0; right: 0; height: 6px; background: linear-gradient(90deg, var(--ocean) 0%, var(--ocean) 68%, var(--coral) 68%, var(--coral) 100%); }
+  
+  /* High-end Badges */
+  .pill { display: inline-flex; align-items: center; gap: .3rem; font-size: 10px; font-weight: 600; letter-spacing: .04em; padding: .3rem .75rem; border-radius: 6px; text-transform: uppercase; }
+  .pill-ocean { background: var(--ocean-light); color: var(--ocean-dark); border: 1px solid rgba(25, 86, 94, 0.15); }
+  .pill-gold { background: #FEF8ED; color: var(--gold); border: 1px solid rgba(163, 114, 32, 0.18); }
+  .pill-coral { background: var(--coral-light); color: #B03E1A; border: 1px solid rgba(222, 93, 53, 0.18); }
+
+  .seal-logo { width: 56px; height: auto; flex-shrink: 0; filter: drop-shadow(0 3px 5px rgba(26,46,53,0.12)); }
+  
+  /* Collapsible Animation */
+  .collapsible-section { max-height: 0; opacity: 0; overflow: hidden; transition: max-height 0.3s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.2s ease; }
+  .collapsible-section.show { max-height: 300px; opacity: 1; margin-top: 1rem; }
+</style>
+</head>
+<body class="min-h-screen flex flex-col antialiased">
+
+<!-- ACTION HEADER -->
+<header class="bg-white border-b border-[var(--line)] py-3.5 px-6 no-print sticky top-0 z-50 shadow-xs backdrop-blur-md bg-white/95">
+  <div class="max-w-7xl mx-auto flex flex-col sm:flex-row justify-between items-center gap-4">
+    <div>
+      <p class="section-eyebrow text-xs">Ormoc Stake · Young Single Adults</p>
+      <h1 class="font-display text-2xl font-semibold text-[var(--ink)] -mt-0.5">Covenant Profile Builder</h1>
+    </div>
+    <div class="flex flex-col sm:flex-row items-center gap-3 w-full sm:w-auto">
+      <button type="button" onclick="downloadPDF()" class="w-full sm:w-auto bg-white text-[var(--ocean-dark)] border border-[var(--line)] text-sm font-semibold py-2.5 px-5 rounded-xl hover:bg-[var(--paper)] hover:border-[var(--ocean)] shadow-xs active:scale-[0.98] transition-all cursor-pointer">
+        Download PDF
+      </button>
+      <button type="button" id="submitBtn" onclick="submitProfile()" class="w-full sm:w-auto bg-[var(--ocean)] text-white text-sm font-semibold py-2.5 px-6 rounded-xl hover:bg-[var(--ocean-dark)] shadow-sm active:scale-[0.98] transition-all cursor-pointer">
+        Submit Profile
+      </button>
+    </div>
+  </div>
+  <div class="max-w-7xl mx-auto hidden" id="statusWrapper">
+    <p id="submitStatus" class="text-xs mt-2.5 px-3 py-2 rounded-lg font-medium inline-block w-full sm:w-auto"></p>
+  </div>
+</header>
+
+<main class="flex-1 max-w-7xl w-full mx-auto p-4 md:p-6 grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+
+  <!-- STEP 1: FORM DASHBOARD -->
+  <div class="lg:col-span-5 bg-white p-6 rounded-2xl border border-[var(--line)] shadow-xs space-y-6 max-h-none lg:max-h-[calc(100vh-7.5rem)] lg:overflow-y-auto custom-scrollbar no-print">
+    <div>
+      <p class="section-eyebrow">Dashboard</p>
+      <h2 class="font-display text-xl font-semibold text-[var(--ink)]">Profile Editor</h2>
+      <p class="text-xs text-gray-400 mt-1">Changes are instantly rendered onto the printable sheet layout on the right.</p>
+    </div>
+
+    <form id="cvForm" class="space-y-5" onsubmit="event.preventDefault();">
+      <div class="space-y-4">
+        <h3 class="font-mono text-[10px] font-bold tracking-widest text-gray-400 uppercase">Primary Info</h3>
+        
+        <div>
+          <label class="field-label">Individual Picture</label>
+          <div class="mt-1 flex items-center justify-center border border-dashed border-[var(--line)] rounded-xl p-4 bg-[var(--paper)] hover:bg-white hover:border-[var(--ocean)] transition group relative cursor-pointer">
+            <input type="file" id="inputPhoto" accept="image/*" class="absolute inset-0 opacity-0 cursor-pointer w-full h-full z-10">
+            <div class="text-center pointer-events-none">
+              <span class="text-xs font-medium text-[var(--ocean)] group-hover:underline">Choose an image asset</span>
+              <p class="text-[10px] text-gray-400 mt-0.5">Formal or decent modern portrait style</p>
+            </div>
+          </div>
+        </div>
+
+        <div>
+          <label class="field-label">Full Name</label>
+          <input type="text" id="inputName" placeholder="Last Name, First Name, M.I." class="field-input mt-1">
+        </div>
+
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="field-label">Birthdate</label>
+            <input type="date" id="inputBirthdate" class="field-input mt-1">
+          </div>
+          <div>
+            <label class="field-label">Member Record No. (MRN)</label>
+            <input type="text" id="inputRecordNum" placeholder="000-0000-0000" class="field-input mt-1 font-mono">
+          </div>
+        </div>
+
+        <div>
+          <label class="field-label">Ward / Unit</label>
+          <select id="inputWard" class="field-input mt-1 appearance-none bg-[url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%23708090%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2s%3E%3C%2Fsvg%3E')] bg-[length:10px_auto] bg-[right_1rem_center] bg-no-repeat pr-8">
+            <option value="">Select Ward</option>
+            <option>Ormoc 1st Ward</option>
+            <option>Ormoc 2nd Ward</option>
+            <option>Ipil Ward</option>
+            <option>Merida Ward</option>
+            <option>Isabel Ward</option>
+            <option>Palompon Ward</option>
+            <option>Villaba Branch</option>
+            <option>Kananga Ward</option>
+          </select>
+        </div>
+
+        <div>
+          <label class="field-label">Home Address</label>
+          <input type="text" id="inputAddress" placeholder="Barangay, City/Municipality, Province" class="field-input mt-1">
+        </div>
+
+        <div>
+          <label class="field-label">Contact Info / Messenger Link</label>
+          <input type="text" id="inputContact" placeholder="Mobile number or facebook profile path" class="field-input mt-1">
+        </div>
+
+        <div>
+          <label class="field-label">Gender</label>
+          <div class="grid grid-cols-2 gap-2 mt-1">
+            <label class="radio-row" id="lblSister"><input type="radio" name="gender" value="Sister" id="genderSister"> Sister</label>
+            <label class="radio-row" id="lblBrother"><input type="radio" name="gender" value="Brother" id="genderBrother"> Brother</label>
+          </div>
+        </div>
+      </div>
+
+      <div class="perforation"></div>
+
+      <div class="space-y-4">
+        <h3 class="font-mono text-[10px] font-bold tracking-widest text-gray-400 uppercase">Spiritual & Service</h3>
+        
+        <div id="priesthoodField" class="collapsible-section">
+          <label class="field-label">Priesthood Office Held</label>
+          <div class="space-y-2 mt-1">
+            <label class="radio-row"><input type="radio" name="priesthood" value="Aaronic Priesthood (Deacon / Teacher / Priest)"> Aaronic Priesthood (Deacon / Teacher / Priest)</label>
+            <label class="radio-row"><input type="radio" name="priesthood" value="Melchizedek Priesthood (Elder)"> Melchizedek Priesthood (Elder)</label>
+            <label class="radio-row"><input type="radio" name="priesthood" value="None"> None</label>
+          </div>
+        </div>
+
+        <div>
+          <label class="field-label">Covenant Milestones</label>
+          <div class="grid grid-cols-1 gap-2 mt-1">
+            <label class="chip-check"><input type="checkbox" name="milestone" value="Has Current Temple Recommend"> Has Current Temple Recommend</label>
+            <label class="chip-check"><input type="checkbox" name="milestone" value="Endowed"> Endowed</label>
+            <label class="chip-check"><input type="checkbox" name="milestone" value="Returned Missionary (RM)"> Returned Missionary (RM)</label>
+          </div>
+        </div>
+
+        <div>
+          <label class="field-label">Current Church Calling(s)</label>
+          <input type="text" id="inputCalling" placeholder="Type &quot;None&quot; if currently without assignment" class="field-input mt-1">
+        </div>
+      </div>
+
+      <div class="perforation"></div>
+
+      <div class="space-y-4">
+        <h3 class="font-mono text-[10px] font-bold tracking-widest text-gray-400 uppercase">Background & Interests</h3>
+        
+        <div>
+          <label class="field-label">Brief Biography</label>
+          <textarea id="inputAboutMe" rows="4" placeholder="Share a brief overview of who you are, your current focuses, or short-term personal goals..." class="field-input mt-1 custom-scrollbar resize-none"></textarea>
+        </div>
+
+        <div>
+          <label class="field-label">Spiritual Anchor</label>
+          <textarea id="inputAnchor" rows="3" placeholder="Favorite scripture block, or foundational prophetic counsel..." class="field-input mt-1 custom-scrollbar resize-none"></textarea>
+        </div>
+
+        <div>
+          <label class="field-label">Hobbies & Fields of Interest</label>
+          <div class="grid grid-cols-1 gap-1.5 mt-1">
+            <label class="chip-check"><input type="checkbox" name="hobby" value="Music / Guitar / Playing Instruments"> Music & Playing Instruments</label>
+            <label class="chip-check"><input type="checkbox" name="hobby" value="Creative Photography / Videography"> Media Production & Photography</label>
+            <label class="chip-check"><input type="checkbox" name="hobby" value="Sports (Basketball, Volleyball, Badminton, etc.)"> Athletics & Active Sports</label>
+            <label class="chip-check"><input type="checkbox" name="hobby" value="Cooking / Baking"> Culinary Arts / Cooking</label>
+            <label class="chip-check"><input type="checkbox" name="hobby" value="Reading / Writing"> Literature & Creative Writing</label>
+            <label class="chip-check"><input type="checkbox" name="hobby" value="Art / Drawing / Design"> Graphic Design & Visual Arts</label>
+          </div>
+          <input type="text" id="inputHobbyOther" placeholder="Other specific interests (comma separated)" class="field-input mt-2">
+        </div>
+
+        <div>
+          <label class="field-label">Favorite Food / Comfort Treat</label>
+          <input type="text" id="inputFood" placeholder="Your favorite culinary comfort choice" class="field-input mt-1">
+        </div>
+
+        <div>
+          <label class="field-label">Temporal Engagement Status</label>
+          <div class="grid grid-cols-2 gap-2 mt-1">
+            <label class="radio-row"><input type="radio" name="status" value="Student"> Student</label>
+            <label class="radio-row"><input type="radio" name="status" value="Employed"> Employed</label>
+            <label class="radio-row"><input type="radio" name="status" value="Self-Employed"> Self-Employed</label>
+            <label class="radio-row"><input type="radio" name="status" value="Other"> Other</label>
+          </div>
+        </div>
+
+        <div>
+          <label class="field-label">Academic Program / Major Discipline</label>
+          <input type="text" id="inputMajor" placeholder="e.g., BS Information Technology (Leave blank if N/A)" class="field-input mt-1">
+        </div>
+      </div>
+    </form>
+  </div>
+
+  <!-- STEP 2: CANVAS SHEET PREVIEW -->
+  <div class="lg:col-span-7 lg:sticky lg:top-[5.5rem] w-full flex flex-col items-center gap-4 max-h-none lg:max-h-[calc(100vh-7.5rem)] lg:overflow-y-auto custom-scrollbar p-1">
+    <div class="w-full max-w-[210mm] text-left">
+      <p class="section-eyebrow">Document View</p>
+      <h2 class="font-display text-xl font-semibold text-[var(--ink)]">Live Sheet Output</h2>
+    </div>
+
+    <!-- Printable Card Render Element -->
+    <div id="cvPreview" class="p-8 sm:p-10 rounded-2xl shadow-xl border border-[var(--line)] w-full max-w-[210mm] min-h-[297mm] flex flex-col justify-between box-border overflow-hidden bg-white select-none">
+      <div class="space-y-6">
+        
+        <!-- Header Compound Layout -->
+        <div class="flex flex-row items-start gap-5 sm:gap-6">
+          <div class="flex-shrink-0">
+            <div class="w-24 h-28 sm:w-28 sm:h-32 bg-[var(--paper)] border border-[var(--line)] rounded-xl overflow-hidden flex items-center justify-center relative shadow-inner">
+              <img id="previewPhoto" src="" class="w-full h-full object-cover hidden" alt="Profile Asset">
+              <div id="photoPlaceholderText" class="text-center p-3 text-[9px] font-mono tracking-wider text-gray-400">PASSPORT<br>IMAGE</div>
+            </div>
+          </div>
+          <div class="flex-1 min-w-0 flex justify-between items-start gap-4">
+            <div class="space-y-1">
+              <p class="section-eyebrow text-[9.5px] tracking-widest text-[var(--coral)]" id="previewGenderTag">Covenant Profile</p>
+              <h2 id="previewName" class="font-display text-2xl sm:text-3xl font-bold text-[var(--ink)] tracking-tight leading-none break-words">Your Full Name</h2>
+              <p id="previewSub" class="text-[var(--ocean)] text-[10px] font-mono tracking-widest font-semibold pt-1">ORMOC STAKE · YSA REGISTRY</p>
+            </div>
+            <img id="sealLogoImg" src="https://www.image2url.com/r2/default/images/1783492977908-c333b85e-dc1c-4af9-a18e-35bc4182f82c.png" crossorigin="anonymous" class="seal-logo" alt="Stake Emblem" onerror="this.style.display='none'">
+          </div>
+        </div>
+
+        <!-- Meta Structural Strip -->
+        <div class="flex justify-between items-center text-[10px] font-mono font-semibold text-gray-400 border-b border-[var(--line)] pb-3">
+          <span id="previewWard" class="tracking-wider">WARD: —</span>
+          <span id="previewRecord" class="tracking-wider">MRN: —</span>
+        </div>
+
+        <!-- Primary Structured Grid Split -->
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-8">
+          
+          <!-- Column 1: Core Parameters & Meta -->
+          <div class="col-span-1 sm:border-r border-[var(--line)] sm:pr-6 space-y-5 text-xs text-gray-600">
+            <div>
+              <h4 class="section-eyebrow !text-[var(--ocean-dark)] mb-1">Contact</h4>
+              <p id="previewContact" class="break-all font-medium text-gray-800">—</p>
+            </div>
+            
+            <div>
+              <h4 class="section-eyebrow !text-[var(--ocean-dark)] mb-1">Home Address</h4>
+              <p id="previewAddress" class="break-words font-medium text-gray-800 leading-relaxed">—</p>
+            </div>
+            
+            <div>
+              <h4 class="section-eyebrow !text-[var(--ocean-dark)] mb-1">Personal Metrics</h4>
+              <div class="space-y-1 mt-1 text-gray-700">
+                <p><strong>Born:</strong> <span id="previewBirthdate" class="font-medium text-gray-900">—</span></p>
+                <p><strong>Status:</strong> <span id="previewStatusText" class="font-medium text-gray-900">—</span></p>
+                <p><strong>Major:</strong> <span id="previewMajorText" class="font-medium text-gray-900">—</span></p>
+              </div>
+            </div>
+            
+            <div>
+              <h4 class="section-eyebrow !text-[var(--ocean-dark)] mb-1">Comfort Food</h4>
+              <p id="previewFood" class="break-words font-medium text-gray-800">—</p>
+            </div>
+            
+            <div>
+              <h4 class="section-eyebrow !text-[var(--ocean-dark)] mb-1">Hobbies</h4>
+              <div id="previewHobbies" class="flex flex-wrap gap-1 mt-1.5">—</div>
+            </div>
+          </div>
+
+          <!-- Column 2 & 3: Deep Context Profiles -->
+          <div class="col-span-1 sm:col-span-2 space-y-6 text-sm">
+            <div>
+              <h3 class="section-eyebrow mb-1.5">About Me</h3>
+              <p id="previewAboutMe" class="text-gray-700 text-xs leading-relaxed break-words font-normal">—</p>
+            </div>
+
+            <div id="previewAnchorBlock" class="bg-[var(--paper)] p-4 rounded-xl border-l-4 border-[var(--ocean)] italic font-display text-[13.5px] text-gray-700 break-words shadow-xs">
+              "Your specified spiritual anchor quote or scripture text will render inside this container."
+            </div>
+
+            <div>
+              <h3 class="section-eyebrow mb-2">Covenant Milestones</h3>
+              <div id="previewMilestones" class="flex flex-wrap gap-1.5">—</div>
+            </div>
+
+            <div id="previewPriesthoodBlock" class="hidden">
+              <h3 class="section-eyebrow mb-1.5">Priesthood Office Held</h3>
+              <p class="text-gray-800 font-medium text-xs tracking-wide" id="previewPriesthoodText">—</p>
+            </div>
+
+            <div>
+              <h3 class="section-eyebrow mb-1.5">Church Service Record</h3>
+              <p class="text-gray-800 font-medium text-xs break-words" id="previewCallingText">—</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Footer Branding Component -->
+      <div class="space-y-3 mt-12">
+        <div class="perforation"></div>
+        <div class="text-center">
+           <h3>Ormoc Philippine Stake YSA</h3>
+          <p class="font-mono text-[8.5px] text-gray-400 tracking-[0.3em] uppercase font-medium">The Church of Jesus Christ of Latter-day Saints · D. Veloso Avenue, Brgy. Dona Felisa Mejia Subd., Ormoc City, Leyte 6541</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</main>
+
+<script>
+  const form = document.getElementById('cvForm');
+
+  function textOrDash(v){ return v && v.trim() ? v.trim() : '—'; }
+
+  // High-performance live renderer syncing model elements to DOM nodes
+  function render(){
+    const name = document.getElementById('inputName').value;
+    document.getElementById('previewName').textContent = textOrDash(name) === '—' ? 'Your Full Name' : name;
+
+    const birth = document.getElementById('inputBirthdate').value;
+    document.getElementById('previewBirthdate').textContent = birth ? new Date(birth + 'T00:00').toLocaleDateString('en-US',{year:'numeric',month:'long',day:'numeric'}) : '—';
+
+    const ward = document.getElementById('inputWard').value;
+    document.getElementById('previewWard').textContent = 'WARD: ' + (ward || '—');
+
+    const mrn = document.getElementById('inputRecordNum').value;
+    document.getElementById('previewRecord').textContent = 'MRN: ' + textOrDash(mrn);
+
+    document.getElementById('previewContact').textContent = textOrDash(document.getElementById('inputContact').value);
+    document.getElementById('previewAddress').textContent = textOrDash(document.getElementById('inputAddress').value);
+    document.getElementById('previewFood').textContent = textOrDash(document.getElementById('inputFood').value);
+
+    const status = document.querySelector('input[name="status"]:checked');
+    document.getElementById('previewStatusText').textContent = status ? status.value : '—';
+    document.getElementById('previewMajorText').textContent = textOrDash(document.getElementById('inputMajor').value);
+
+    document.getElementById('previewAboutMe').textContent = textOrDash(document.getElementById('inputAboutMe').value);
+
+    const anchor = document.getElementById('inputAnchor').value;
+    document.getElementById('previewAnchorBlock').textContent = anchor.trim() ? '"' + anchor.trim() + '"' : 'Your specified spiritual anchor quote or scripture text will render inside this container.';
+
+    document.getElementById('previewCallingText').textContent = textOrDash(document.getElementById('inputCalling').value);
+
+    // Dynamic UI states handling depending on gender assignments
+    const gender = document.querySelector('input[name="gender"]:checked');
+    const priesthoodField = document.getElementById('priesthoodField');
+    const priesthoodBlock = document.getElementById('previewPriesthoodBlock');
+    const genderTag = document.getElementById('previewGenderTag');
+
+    // UI background feedback styling rules updates
+    document.getElementById('lblSister').style.borderColor = (gender && gender.value === 'Sister') ? 'var(--coral)' : 'var(--line)';
+    document.getElementById('lblBrother').style.borderColor = (gender && gender.value === 'Brother') ? 'var(--coral)' : 'var(--line)';
+
+    if(gender && gender.value === 'Brother'){
+      priesthoodField.classList.add('show');
+      priesthoodBlock.classList.remove('hidden');
+      genderTag.textContent = 'Covenant Profile · Brother';
+      const p = document.querySelector('input[name="priesthood"]:checked');
+      document.getElementById('previewPriesthoodText').textContent = p ? p.value : '—';
+    } else if(gender && gender.value === 'Sister') {
+      priesthoodField.classList.remove('show');
+      priesthoodBlock.classList.add('hidden');
+      genderTag.textContent = 'Covenant Profile · Sister';
+    } else {
+      priesthoodField.classList.remove('show');
+      priesthoodBlock.classList.add('hidden');
+      genderTag.textContent = 'Covenant Profile';
+    }
+
+    // Milestones dynamic block rendering
+    const milestones = Array.from(document.querySelectorAll('input[name="milestone"]:checked')).map(el => el.value);
+    const msEl = document.getElementById('previewMilestones');
+    if(milestones.length === 0){
+      msEl.innerHTML = '<span class="text-gray-400 text-xs font-normal">—</span>';
+    } else {
+      const colors = ['pill-ocean','pill-gold','pill-coral'];
+      msEl.innerHTML = milestones.map((m,i) => `<span class="pill ${colors[i % colors.length]}">${m}</span>`).join('');
+    }
+
+    // Hobbies tracking dynamic block rendering
+    const hobbies = Array.from(document.querySelectorAll('input[name="hobby"]:checked')).map(el => el.value);
+    const other = document.getElementById('inputHobbyOther').value.trim();
+    if(other) {
+      other.split(',').forEach(item => { if(item.trim()) hobbies.push(item.trim()); });
+    }
+    const hbEl = document.getElementById('previewHobbies');
+    if(hobbies.length === 0){
+      hbEl.innerHTML = '<span class="text-gray-400 text-xs font-normal">—</span>';
+    } else {
+      hbEl.innerHTML = hobbies.map(h => `<span class="pill pill-ocean">${h}</span>`).join('');
+    }
+  }
+
+  form.addEventListener('input', render);
+  form.addEventListener('change', render);
+
+  // File loading mechanism rules architecture
+  document.getElementById('inputPhoto').addEventListener('change', function(e){
+    const file = e.target.files[0];
+    const preview = document.getElementById('previewPhoto');
+    const placeholder = document.getElementById('photoPlaceholderText');
+    if(file){
+      const reader = new FileReader();
+      reader.onload = ev => {
+        preview.src = ev.target.result;
+        preview.classList.remove('hidden');
+        placeholder.classList.add('hidden');
+      };
+      reader.readAsDataURL(file);
+    } else {
+      preview.src = '';
+      preview.classList.add('hidden');
+      placeholder.classList.remove('hidden');
+    }
+  });
+
+  function buildFilename(){
+    const nameField = document.getElementById('inputName').value.trim() || 'YSA_Profile';
+    return nameField.replace(/[^a-z0-9]/gi,'_').toLowerCase() + '_ysa_profile.pdf';
+  }
+
+  function pdfOptions(filename){
+    return {
+      margin: [0.35, 0.35, 0.35, 0.35],
+      filename: filename,
+      image: { type: 'jpeg', quality: 0.98 },
+      html2canvas: { scale: 2, useCORS: true, letterRendering: true },
+      jsPDF: { unit: 'in', format: 'letter', orientation: 'portrait' }
+    };
+  }
+
+  async function exportPdf(mode){
+    const element = document.getElementById('cvPreview');
+    const filename = buildFilename();
+    const logoImg = document.getElementById('sealLogoImg');
+
+    async function run(){
+      const worker = html2pdf().set(pdfOptions(filename)).from(element);
+      return mode === 'save' ? worker.save() : worker.outputPdf('datauristring');
+    }
+
+    try {
+      return await run();
+    } catch(err){
+      console.warn('PDF compiler caught edge case logic execution roadblock. Falling back...', err);
+      const hadLogo = logoImg && logoImg.style.visibility !== 'hidden';
+      if(logoImg) logoImg.style.visibility = 'hidden';
+      try {
+        return await run();
+      } finally {
+        if(hadLogo) logoImg.style.visibility = 'visible';
+      }
+    }
+  }
+
+  async function downloadPDF(){
+    try {
+      await exportPdf('save');
+    } catch(err){
+      alert('PDF download compiler context generation fault: ' + err.message);
+    }
+  }
+
+  const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzcWwJgGNsmc0ENxbWi2QxtVqupBmdhAQiVpAJs02QctM67YZgpuBjybHdE-M2FzpDLXg/exec';
+
+  function calcAge(birthdateStr){
+    if(!birthdateStr) return null;
+    const dob = new Date(birthdateStr);
+    if(isNaN(dob)) return null;
+    const today = new Date();
+    let age = today.getFullYear() - dob.getFullYear();
+    const m = today.getMonth() - dob.getMonth();
+    if(m < 0 || (m === 0 && today.getDate() < dob.getDate())) age--;
+    return age;
+  }
+
+  async function submitProfile(){
+    const statusWrapper = document.getElementById('statusWrapper');
+    const statusEl = document.getElementById('submitStatus');
+    const btn = document.getElementById('submitBtn');
+
+    if(!APPS_SCRIPT_URL || APPS_SCRIPT_URL.indexOf('PASTE_YOUR') === 0){
+      statusWrapper.classList.remove('hidden');
+      statusEl.textContent = 'Submit-to-Drive tracking infrastructure is unconfigured.';
+      statusEl.className = 'text-xs mt-2 text-[var(--coral)] bg-red-50 px-3 py-2 rounded-lg font-medium w-full';
+      return;
+    }
+
+    const name = document.getElementById('inputName').value.trim();
+    if(!name){
+      statusWrapper.classList.remove('hidden');
+      statusEl.textContent = 'Validation error: "Full Name" is a mandatory field to sync metadata before submission tracking.';
+      statusEl.className = 'text-xs mt-2 text-[var(--coral)] bg-red-50 px-3 py-2 rounded-lg font-medium w-full';
+      return;
+    }
+
+    const ward = document.getElementById('inputWard').value;
+    const genderInput = document.querySelector('input[name="gender"]:checked');
+    const statusInput = document.querySelector('input[name="status"]:checked');
+    const age = calcAge(document.getElementById('inputBirthdate').value);
+
+    btn.disabled = true;
+    btn.textContent = 'Processing Data Pipeline...';
+    statusWrapper.classList.add('hidden');
+
+    try {
+      const filename = buildFilename();
+      const pdfDataUri = await exportPdf('blob');
+      const base64 = pdfDataUri.split(',')[1];
+
+      const response = await fetch(APPS_SCRIPT_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+        body: JSON.stringify({
+          filename: filename,
+          pdfBase64: base64,
+          name: name,
+          ward: ward,
+          gender: genderInput ? genderInput.value : '',
+          age: age,
+          temporalStatus: statusInput ? statusInput.value : ''
+        })
+      });
+      const result = await response.json();
+
+      statusWrapper.classList.remove('hidden');
+      if(result.status === 'success') {
+        btn.textContent = 'Submitted Successfully ✓';
+        statusEl.textContent = 'Success! Your document was compiled and securely filed into the Stake YSA database system.';
+        statusEl.className = 'text-xs mt-2 text-[var(--ocean-dark)] bg-emerald-50 border border-emerald-200/60 px-3 py-2 rounded-lg font-medium w-full';
+      } else {
+        throw new Error(result.message || 'Remote tracking system transmission generic processing fault.');
+      }
+    } catch(err){
+      btn.textContent = 'Submit Profile';
+      statusWrapper.classList.remove('hidden');
+      statusEl.textContent = 'Data channel transmission failed (' + err.message + '). Please hit "Download PDF" to save it manually instead.';
+      statusEl.className = 'text-xs mt-2 text-[var(--coral)] bg-red-50 px-3 py-2 rounded-lg font-medium w-full';
+    } finally {
+      btn.disabled = false;
+    }
+  }
+
+  // Init sequence mapping
+  render();
+</script>
+</body>
+</html>
