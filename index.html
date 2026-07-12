@@ -108,6 +108,23 @@
     </div>
 
     <form id="cvForm" class="space-y-5" onsubmit="event.preventDefault();">
+      <div class="bg-[var(--ocean-light)] border border-[rgba(25,86,94,0.18)] rounded-xl p-4 space-y-2.5">
+        <h3 class="font-mono text-[10px] font-bold tracking-widest text-[var(--ocean-dark)] uppercase">Data Privacy Notice</h3>
+        <p class="text-[11.5px] text-gray-700 leading-relaxed">
+          By submitting this form, you agree that the information and photo you provide — including your name, birthdate, contact details, address, church calling, and personal background — will be collected and processed by the Ormoc Philippine Stake YSA committee, in accordance with the Data Privacy Act of 2012 (RA 10173).
+        </p>
+        <p class="text-[11.5px] text-gray-700 leading-relaxed">
+          This information will be stored in a restricted Google Drive/Sheet accessible only to authorized stake and ward leaders, and used solely for ministering, member records, and YSA activity coordination. It will not be shared publicly or with third parties outside the stake.
+        </p>
+        <p class="text-[11.5px] text-gray-700 leading-relaxed">
+          You may request to have your information corrected or removed at any time by contacting the stake office at <a href="mailto:ormocysaprofiling@gmail.com" class="text-[var(--ocean-dark)] font-semibold hover:underline">ormocysaprofiling@gmail.com</a>.
+        </p>
+        <label class="flex items-start gap-2.5 pt-1 cursor-pointer select-none">
+          <input type="checkbox" id="inputConsent" class="mt-0.5 accent-[var(--ocean)] w-4 h-4 flex-shrink-0">
+          <span class="text-[12px] font-medium text-[var(--ink)]">I have read the notice above and consent to my information and photo being collected, stored, and used as described.</span>
+        </label>
+      </div>
+
       <div class="space-y-4">
         <h3 class="font-mono text-[10px] font-bold tracking-widest text-gray-400 uppercase">Primary Info</h3>
         
@@ -547,6 +564,14 @@
       statusWrapper.classList.remove('hidden');
       statusEl.textContent = 'Validation error: "Full Name" is a mandatory field to sync metadata before submission tracking.';
       statusEl.className = 'text-xs mt-2 text-[var(--coral)] bg-red-50 px-3 py-2 rounded-lg font-medium w-full';
+      return;
+    }
+
+    if(!document.getElementById('inputConsent').checked){
+      statusWrapper.classList.remove('hidden');
+      statusEl.textContent = 'Please read and check the Data Privacy Notice consent box before submitting.';
+      statusEl.className = 'text-xs mt-2 text-[var(--coral)] bg-red-50 px-3 py-2 rounded-lg font-medium w-full';
+      document.getElementById('inputConsent').scrollIntoView({ behavior: 'smooth', block: 'center' });
       return;
     }
 
