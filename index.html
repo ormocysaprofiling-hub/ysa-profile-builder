@@ -517,7 +517,7 @@
     }
   }
 
-  const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwCzz0dflaswMvSkCFMwaZ_bQsHWOrAe8mvQUexKRIDax7FzXj0A-xXMS6A9aqRXuc88w/exec';
+  const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbz6904pt0B1_sBjyXL_eJM8YQc5NBaA266lgDL9Ah6Go0rZmCEtXL5DaoixPzCWack2Bg/exec';
 
   function calcAge(birthdateStr){
     if(!birthdateStr) return null;
@@ -574,7 +574,9 @@
           ward: ward,
           gender: genderInput ? genderInput.value : '',
           age: age,
-          temporalStatus: statusInput ? statusInput.value : ''
+          temporalStatus: statusInput ? statusInput.value : '',
+          contact: document.getElementById('inputContact').value.trim(),
+          bio: document.getElementById('inputAboutMe').value.trim()
         })
       });
       const result = await response.json();
