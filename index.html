@@ -123,7 +123,7 @@
       <div class="bg-[var(--paper)] border border-[var(--line)] rounded-xl p-4 space-y-1.5">
         <h3 data-i18n="explainerTitle" class="font-mono text-[10px] font-bold tracking-widest text-gray-400 uppercase">Why We're Asking</h3>
         <p data-i18n="explainerBody" class="text-[11.5px] text-gray-600 leading-relaxed">
-          This profile helps Stake Young Single Adults (YSA) Leaders get to know you, reach out at the right moments, and plan activities that actually fit who's in our YSA community. Fill in what you're comfortable sharing — every field below is meant to help someone minister to you better, not just collect data.
+          This profile helps your ward and stake leaders get to know you, reach out at the right moments, and plan activities that actually fit who's in our YSA community. Fill in what you're comfortable sharing — every field below is meant to help someone minister to you better, not just collect data.
         </p>
       </div>
 
@@ -133,7 +133,7 @@
           By submitting this form, you agree that the information and photo you provide — including your name, birthdate, contact details, address, church calling, and personal background — will be collected and processed by the Ormoc Philippine Stake YSA committee, in accordance with the Data Privacy Act of 2012 (RA 10173).
         </p>
         <p data-i18n="privacyP2" class="text-[11.5px] text-gray-700 leading-relaxed">
-          This information will be stored in a restricted Google Drive/Sheet accessible only to authorized Stake YSA Leaders and Committee, and used solely for ministering, YSA member records, and YSA activity coordination. It will not be shared publicly or with third parties outside the stake.
+          This information will be stored in a restricted Google Drive/Sheet accessible only to authorized stake and ward leaders, and used solely for ministering, member records, and YSA activity coordination. It will not be shared publicly or with third parties outside the stake.
         </p>
         <p data-i18n="privacyP3" class="text-[11.5px] text-gray-700 leading-relaxed">
           You may request to have your information corrected or removed at any time by contacting the stake office at <a href="mailto:ormocysaprofiling@gmail.com" class="text-[var(--ocean-dark)] font-semibold hover:underline">ormocysaprofiling@gmail.com</a>.
@@ -430,10 +430,10 @@
       dashboardTitle: 'Profile Editor',
       dashboardSub: 'Changes are instantly rendered onto the printable sheet layout on the right.',
       explainerTitle: "Why We're Asking",
-      explainerBody: "This profile helps your Stake Young Single Adults (YSA) Leaders get to know you, reach out at the right moments, and plan activities that actually fit who's in our YSA community. Fill in what you're comfortable sharing — every field below is meant to help someone minister to you better, not just collect data.",
+      explainerBody: "This profile helps your ward and stake leaders get to know you, reach out at the right moments, and plan activities that actually fit who's in our YSA community. Fill in what you're comfortable sharing — every field below is meant to help someone minister to you better, not just collect data.",
       privacyTitle: 'Data Privacy Notice',
       privacyP1: 'By submitting this form, you agree that the information and photo you provide — including your name, birthdate, contact details, address, church calling, and personal background — will be collected and processed by the Ormoc Philippine Stake YSA committee, in accordance with the Data Privacy Act of 2012 (RA 10173).',
-      privacyP2: 'This information will be stored in a restricted Google Drive/Sheet accessible only to authorized Stake Young Single Adults Leaders and Assigned Committee, and used solely for ministering, member records, and YSA activity coordination. It will not be shared publicly or with third parties outside the stake.',
+      privacyP2: 'This information will be stored in a restricted Google Drive/Sheet accessible only to authorized stake and ward leaders, and used solely for ministering, member records, and YSA activity coordination. It will not be shared publicly or with third parties outside the stake.',
       privacyP3html: 'You may request to have your information corrected or removed at any time by contacting the stake office at <a href="mailto:ormocysaprofiling@gmail.com" class="text-[var(--ocean-dark)] font-semibold hover:underline">ormocysaprofiling@gmail.com</a>.',
       consentLabel: 'I have read the notice above and consent to my information and photo being collected, stored, and used as described.',
       photoConsentLabel: '(Optional) I also allow my photo to be used in stake YSA social media posts, newsletters, or activity promotions.',
@@ -825,6 +825,7 @@
           temporalStatus: statusInput ? statusInput.value : '',
           contact: document.getElementById('inputContact').value.trim(),
           email: email,
+          birthdate: document.getElementById('inputBirthdate').value,
           bio: document.getElementById('inputAboutMe').value.trim()
         })
       });
