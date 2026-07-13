@@ -1,17 +1,31 @@
 /* ============================================================
    ACCESS CONTROL
    ------------------------------------------------------------
-   This is a CLIENT-SIDE gate only — it hides the page behind a
-   shared access code, which is good enough to keep casual/public
-   visitors out of an internal directory, but the code itself
-   ships inside this file and can be read by anyone who opens
-   dev tools. Do not rely on this alone if leader/YSA contact
-   info is sensitive — pair it with real auth (e.g. a backend,
-   Netlify Identity, Google Workspace SSO) for anything higher-stakes.
-   Change ACCESS_CODE below to set your own passphrase.
+   Individual username/password per leader. Passwords are stored
+   as SHA-256 hashes below (not plain text) — a step up from a
+   readable password, but since this is a static site with no
+   real backend, a determined person could still find ways around
+   this by reading the code. Don't treat this as bank-grade
+   security; it's meant to keep casual/public visitors out and
+   give each leader their own login, not to protect truly
+   sensitive data.
+
+   TO ADD OR CHANGE A LEADER'S LOGIN:
+   Send Claude the username + password you want and it will
+   generate the correct hash line for you to paste in below.
    ============================================================ */
-const ACCESS_CODE = "GatheringInChrist";
+const LEADER_CREDENTIALS = [
+  { username: 'keanutugonon87', name: 'KeanuTugonon', passwordHash: '171b09eeb5a9efff496bdc8eeeab71cf6648a1631b381ffe4416fe3a87f4b0f5' },
+  { username: 'jamjampales12', name: 'JamJamPales', passwordHash: '66afee34dd6fd2be95e9c0332fa014f21776b26cad9192f67710cf736e8f21df' },
+  { username: 'benzgwapo11', name: 'benzgwapo11', passwordHash: '9d8fa1933c05f10725fee8de4ce996214283c517a3d61cc059117ac224dedd3a' },
+];
 const SESSION_KEY = "gic_leader_session";
+
+async function sha256Hex(text) {
+    const enc = new TextEncoder().encode(text);
+    const digest = await crypto.subtle.digest('SHA-256', enc);
+    return Array.from(new Uint8Array(digest)).map(b => b.toString(16).padStart(2, '0')).join('');
+}
 
 let leadersData = [];
 let activeDepartment = 'All';
@@ -39,8 +53,9 @@ function initAuth() {
     if (saved) {
         try {
             const session = JSON.parse(saved);
-            if (session && session.code === ACCESS_CODE) {
-                enterApp(session.name);
+            const match = LEADER_CREDENTIALS.find(c => c.username === session.username && c.passwordHash === session.passwordHash);
+            if (session && match) {
+                enterApp(match.name);
                 return;
             }
         } catch (e) { /* fall through to login */ }
@@ -48,16 +63,19 @@ function initAuth() {
     document.getElementById('login-name').focus();
 }
 
-function handleLogin(e) {
+async function handleLogin(e) {
     e.preventDefault();
-    const name = document.getElementById('login-name').value.trim();
+    const username = document.getElementById('login-name').value.trim().toLowerCase();
     const pass = document.getElementById('login-pass').value;
     const remember = document.getElementById('remember-me').checked;
     const errorBox = document.getElementById('login-error');
     const card = document.querySelector('.login-card');
 
-    if (pass !== ACCESS_CODE) {
-        errorBox.textContent = "That access code isn't recognized. Please check with the stake office and try again.";
+    const passwordHash = await sha256Hex(pass);
+    const match = LEADER_CREDENTIALS.find(c => c.username.toLowerCase() === username && c.passwordHash === passwordHash);
+
+    if (!match) {
+        errorBox.textContent = "That username or password isn't recognized. Please check with the stake office and try again.";
         errorBox.classList.remove('hidden');
         card.classList.add('shake');
         setTimeout(() => card.classList.remove('shake'), 400);
@@ -65,7 +83,7 @@ function handleLogin(e) {
     }
 
     errorBox.classList.add('hidden');
-    const session = JSON.stringify({ name, code: ACCESS_CODE, ts: Date.now() });
+    const session = JSON.stringify({ username: match.username, passwordHash, ts: Date.now() });
     if (remember) {
         localStorage.setItem(SESSION_KEY, session);
     } else {
@@ -73,7 +91,7 @@ function handleLogin(e) {
     }
 
     document.getElementById('login-screen').classList.add('unlocking');
-    setTimeout(() => enterApp(name), 280);
+    setTimeout(() => enterApp(match.name), 280);
 }
 
 function handleLogout() {
@@ -96,6 +114,32 @@ function enterApp(name) {
 
 /* ---------------- TOP-LEVEL DIRECTORY TABS ---------------- */
 
+// Set this to the live URL of your profile-builder.html page once
+// it's deployed, so the QR code / share link in the YSA tab works.
+const YSA_FORM_URL = 'PASTE_YOUR_PROFILE_BUILDER_URL_HERE';
+
+function initShareWidget() {
+    const linkInput = document.getElementById('share-form-link');
+    const qrImg = document.getElementById('share-qr-img');
+    if (!YSA_FORM_URL || YSA_FORM_URL.indexOf('PASTE_YOUR') === 0) {
+        linkInput.value = 'Set YSA_FORM_URL in app.js to enable this';
+        return;
+    }
+    linkInput.value = YSA_FORM_URL;
+    qrImg.src = 'https://api.qrserver.com/v1/create-qr-code/?size=140x140&data=' + encodeURIComponent(YSA_FORM_URL);
+}
+
+function copyShareLink() {
+    const linkInput = document.getElementById('share-form-link');
+    if (!YSA_FORM_URL || YSA_FORM_URL.indexOf('PASTE_YOUR') === 0) return;
+    navigator.clipboard.writeText(linkInput.value).then(() => {
+        const btn = event.target;
+        const original = btn.textContent;
+        btn.textContent = 'Copied!';
+        setTimeout(() => { btn.textContent = original; }, 1500);
+    });
+}
+
 function selectDirectory(directory) {
     document.querySelectorAll('#directory-tabs .committee-tab').forEach(tab => {
         tab.classList.toggle('active', tab.dataset.directory === directory);
@@ -104,6 +148,7 @@ function selectDirectory(directory) {
     document.getElementById('ysa-panel').classList.toggle('hidden', directory !== 'ysa');
 
     if (directory === 'ysa' && !ysaLoaded) loadYsaDirectory();
+    if (directory === 'ysa') initShareWidget();
 }
 
 /* ============================================================
@@ -231,7 +276,7 @@ function handleSearchAndFilter() {
    To change the Temporal Status options, edit the list below.
    ============================================================ */
 
-const YSA_SHEET_API_URL = 'https://script.google.com/macros/s/AKfycbz6904pt0B1_sBjyXL_eJM8YQc5NBaA266lgDL9Ah6Go0rZmCEtXL5DaoixPzCWack2Bg/exec';
+const YSA_SHEET_API_URL = 'https://script.google.com/macros/s/AKfycbzVw8ky9mdVrOARXkAzdNqG-2dgzvxM6KiDlKKBRvW0qsmpkGs6xJ37yamikGqiOgA_kA/exec';
 
 const YSA_TEMPORAL_STATUS_OPTIONS = ["Student", "Employed", "Self-Employed", "Other"];
 
@@ -308,14 +353,21 @@ function renderYsaDirectory(list) {
 
     list.forEach(p => {
         const genderSeal = (p.gender === 'Sister' || p.gender === 'Female') ? 'bg-[#B7552F]' : 'bg-[#1F4B46]';
+        const updatedLabel = formatUpdatedDate(p.updatedAt);
 
         const card = document.createElement('div');
         card.className = 'leader-card rounded-xl overflow-hidden p-5';
         card.innerHTML = `
             <div class="flex items-center space-x-4 mb-3">
+                ${p.photoUrl ? `
+                <img class="avatar-ring h-12 w-12 rounded-full object-cover flex-shrink-0" src="${p.photoUrl}" alt="${p.name || 'Photo'}"
+                     onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                <div style="display:none" class="avatar-ring h-12 w-12 rounded-full items-center justify-center font-serif-theme text-sm font-semibold text-white ${genderSeal} flex-shrink-0">
+                    ${initials(p.name || '?')}
+                </div>` : `
                 <div class="avatar-ring h-12 w-12 rounded-full flex items-center justify-center font-serif-theme text-sm font-semibold text-white ${genderSeal} flex-shrink-0">
                     ${initials(p.name || '?')}
-                </div>
+                </div>`}
                 <div class="min-w-0">
                     <h3 class="font-serif-theme text-base font-semibold leading-tight truncate">${p.name || 'Unnamed'}</h3>
                     <p class="text-xs font-medium text-[color:var(--ink-soft)] mt-0.5">${p.ward || 'Unit not set'}</p>
@@ -350,7 +402,15 @@ function renderYsaDirectory(list) {
                 <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/></svg>
                 View PDF Profile
             </a>` : ''}
+            ${updatedLabel ? `<div class="mt-2 text-center text-[9px] text-[color:var(--ink-soft)]">Updated ${updatedLabel}</div>` : ''}
         `;
         grid.appendChild(card);
     });
+}
+
+function formatUpdatedDate(iso) {
+    if (!iso) return '';
+    const d = new Date(iso);
+    if (isNaN(d)) return '';
+    return d.toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' });
 }
