@@ -72,22 +72,34 @@
   /* Collapsible Animation */
   .collapsible-section { max-height: 0; opacity: 0; overflow: hidden; transition: max-height 0.3s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.2s ease; }
   .collapsible-section.show { max-height: 300px; opacity: 1; margin-top: 1rem; }
+
+  /* Language toggle */
+  .lang-btn { background: #fff; color: #8a8f8d; transition: all .15s; }
+  .lang-btn:hover { background: var(--paper); }
+  .lang-btn.active { background: var(--ocean); color: #fff; }
 </style>
 </head>
 <body class="min-h-screen flex flex-col antialiased">
 
 <!-- ACTION HEADER -->
 <header class="bg-white border-b border-[var(--line)] py-3.5 px-6 no-print sticky top-0 z-50 shadow-xs backdrop-blur-md bg-white/95">
+  <div class="max-w-7xl mx-auto flex justify-end mb-2">
+    <div class="inline-flex rounded-lg border border-[var(--line)] overflow-hidden text-[10.5px] font-mono font-semibold" id="langToggle">
+      <button type="button" onclick="setLang('en')" data-lang-btn="en" class="lang-btn px-2.5 py-1 cursor-pointer">EN</button>
+      <button type="button" onclick="setLang('tl')" data-lang-btn="tl" class="lang-btn px-2.5 py-1 cursor-pointer border-l border-[var(--line)]">TL</button>
+      <button type="button" onclick="setLang('ceb')" data-lang-btn="ceb" class="lang-btn px-2.5 py-1 cursor-pointer border-l border-[var(--line)]">CEB</button>
+    </div>
+  </div>
   <div class="max-w-7xl mx-auto flex flex-col sm:flex-row justify-between items-center gap-4">
     <div>
-      <p class="section-eyebrow text-xs">Ormoc Stake · Young Single Adults</p>
-      <h1 class="font-display text-2xl font-semibold text-[var(--ink)] -mt-0.5">Covenant Profile Builder</h1>
+      <p data-i18n="appEyebrow" class="section-eyebrow text-xs">Ormoc Stake · Young Single Adults</p>
+      <h1 data-i18n="appTitle" class="font-display text-2xl font-semibold text-[var(--ink)] -mt-0.5">Covenant Profile Builder</h1>
     </div>
     <div class="flex flex-col sm:flex-row items-center gap-3 w-full sm:w-auto">
-      <button type="button" onclick="downloadPDF()" class="w-full sm:w-auto bg-white text-[var(--ocean-dark)] border border-[var(--line)] text-sm font-semibold py-2.5 px-5 rounded-xl hover:bg-[var(--paper)] hover:border-[var(--ocean)] shadow-xs active:scale-[0.98] transition-all cursor-pointer">
+      <button type="button" onclick="downloadPDF()" class="w-full sm:w-auto bg-white text-[var(--ocean-dark)] border border-[var(--line)] text-sm font-semibold py-2.5 px-5 rounded-xl hover:bg-[var(--paper)] hover:border-[var(--ocean)] shadow-xs active:scale-[0.98] transition-all cursor-pointer" data-i18n="btnDownload">
         Download PDF
       </button>
-      <button type="button" id="submitBtn" onclick="submitProfile()" class="w-full sm:w-auto bg-[var(--ocean)] text-white text-sm font-semibold py-2.5 px-6 rounded-xl hover:bg-[var(--ocean-dark)] shadow-sm active:scale-[0.98] transition-all cursor-pointer">
+      <button type="button" id="submitBtn" onclick="submitProfile()" class="w-full sm:w-auto bg-[var(--ocean)] text-white text-sm font-semibold py-2.5 px-6 rounded-xl hover:bg-[var(--ocean-dark)] shadow-sm active:scale-[0.98] transition-all cursor-pointer" data-i18n="btnSubmit">
         Submit Profile
       </button>
     </div>
@@ -102,34 +114,45 @@
   <!-- STEP 1: FORM DASHBOARD -->
   <div class="lg:col-span-5 bg-white p-6 rounded-2xl border border-[var(--line)] shadow-xs space-y-6 max-h-none lg:max-h-[calc(100vh-7.5rem)] lg:overflow-y-auto custom-scrollbar no-print">
     <div>
-      <p class="section-eyebrow">Dashboard</p>
-      <h2 class="font-display text-xl font-semibold text-[var(--ink)]">Profile Editor</h2>
-      <p class="text-xs text-gray-400 mt-1">Changes are instantly rendered onto the printable sheet layout on the right.</p>
+      <p data-i18n="dashboardEyebrow" class="section-eyebrow">Dashboard</p>
+      <h2 data-i18n="dashboardTitle" class="font-display text-xl font-semibold text-[var(--ink)]">Profile Editor</h2>
+      <p data-i18n="dashboardSub" class="text-xs text-gray-400 mt-1">Changes are instantly rendered onto the printable sheet layout on the right.</p>
     </div>
 
     <form id="cvForm" class="space-y-5" onsubmit="event.preventDefault();">
+      <div class="bg-[var(--paper)] border border-[var(--line)] rounded-xl p-4 space-y-1.5">
+        <h3 data-i18n="explainerTitle" class="font-mono text-[10px] font-bold tracking-widest text-gray-400 uppercase">Why We're Asking</h3>
+        <p data-i18n="explainerBody" class="text-[11.5px] text-gray-600 leading-relaxed">
+          This profile helps your ward and stake leaders get to know you, reach out at the right moments, and plan activities that actually fit who's in our YSA community. Fill in what you're comfortable sharing — every field below is meant to help someone minister to you better, not just collect data.
+        </p>
+      </div>
+
       <div class="bg-[var(--ocean-light)] border border-[rgba(25,86,94,0.18)] rounded-xl p-4 space-y-2.5">
-        <h3 class="font-mono text-[10px] font-bold tracking-widest text-[var(--ocean-dark)] uppercase">Data Privacy Notice</h3>
-        <p class="text-[11.5px] text-gray-700 leading-relaxed">
+        <h3 data-i18n="privacyTitle" class="font-mono text-[10px] font-bold tracking-widest text-[var(--ocean-dark)] uppercase">Data Privacy Notice</h3>
+        <p data-i18n="privacyP1" class="text-[11.5px] text-gray-700 leading-relaxed">
           By submitting this form, you agree that the information and photo you provide — including your name, birthdate, contact details, address, church calling, and personal background — will be collected and processed by the Ormoc Philippine Stake YSA committee, in accordance with the Data Privacy Act of 2012 (RA 10173).
         </p>
-        <p class="text-[11.5px] text-gray-700 leading-relaxed">
-          This information will be stored in a restricted Google Drive/Sheet accessible only to authorized Stake YSA leaders, and used solely for ministering, member records, and YSA activity coordination. It will not be shared publicly or with third parties outside the stake.
+        <p data-i18n="privacyP2" class="text-[11.5px] text-gray-700 leading-relaxed">
+          This information will be stored in a restricted Google Drive/Sheet accessible only to authorized stake and ward leaders, and used solely for ministering, member records, and YSA activity coordination. It will not be shared publicly or with third parties outside the stake.
         </p>
-        <p class="text-[11.5px] text-gray-700 leading-relaxed">
+        <p data-i18n="privacyP3" class="text-[11.5px] text-gray-700 leading-relaxed">
           You may request to have your information corrected or removed at any time by contacting the stake office at <a href="mailto:ormocysaprofiling@gmail.com" class="text-[var(--ocean-dark)] font-semibold hover:underline">ormocysaprofiling@gmail.com</a>.
         </p>
         <label class="flex items-start gap-2.5 pt-1 cursor-pointer select-none">
           <input type="checkbox" id="inputConsent" class="mt-0.5 accent-[var(--ocean)] w-4 h-4 flex-shrink-0">
-          <span class="text-[12px] font-medium text-[var(--ink)]">I have read the notice above and consent to my information and photo being collected, stored, and used as described.</span>
+          <span data-i18n="consentLabel" class="text-[12px] font-medium text-[var(--ink)]">I have read the notice above and consent to my information and photo being collected, stored, and used as described.</span>
+        </label>
+        <label class="flex items-start gap-2.5 pt-1 cursor-pointer select-none border-t border-[rgba(25,86,94,0.15)] mt-2 pt-3">
+          <input type="checkbox" id="inputPhotoConsent" class="mt-0.5 accent-[var(--ocean)] w-4 h-4 flex-shrink-0">
+          <span data-i18n="photoConsentLabel" class="text-[12px] font-medium text-[var(--ink)]">(Optional) I also allow my photo to be used in stake YSA social media posts, newsletters, or activity promotions.</span>
         </label>
       </div>
 
       <div class="space-y-4">
-        <h3 class="font-mono text-[10px] font-bold tracking-widest text-gray-400 uppercase">Primary Info</h3>
+        <h3 data-i18n="sectionPrimary" class="font-mono text-[10px] font-bold tracking-widest text-gray-400 uppercase">Primary Info</h3>
         
         <div>
-          <label class="field-label">Individual Picture</label>
+          <label data-i18n="labelPhoto" class="field-label">Individual Picture</label>
           <div class="mt-1 flex items-center justify-center border border-dashed border-[var(--line)] rounded-xl p-4 bg-[var(--paper)] hover:bg-white hover:border-[var(--ocean)] transition group relative cursor-pointer">
             <input type="file" id="inputPhoto" accept="image/*" class="absolute inset-0 opacity-0 cursor-pointer w-full h-full z-10">
             <div class="text-center pointer-events-none">
@@ -140,24 +163,24 @@
         </div>
 
         <div>
-          <label class="field-label">Full Name</label>
+          <label data-i18n="labelFullName" class="field-label">Full Name</label>
           <input type="text" id="inputName" placeholder="Last Name, First Name, M.I." class="field-input mt-1">
         </div>
 
         <div class="grid grid-cols-2 gap-3">
           <div>
-            <label class="field-label">Birthdate</label>
+            <label data-i18n="labelBirthdate" class="field-label">Birthdate</label>
             <input type="date" id="inputBirthdate" class="field-input mt-1">
           </div>
           <div>
-            <label class="field-label">Member Record No. (MRN)</label>
+            <label data-i18n="labelMRN" class="field-label">Member Record No. (MRN)</label>
             <input type="text" id="inputRecordNum" placeholder="000-0000-0000" class="field-input mt-1 font-mono">
           </div>
         </div>
 
         <div>
-          <label class="field-label">Ward / Unit</label>
-          <select id="inputWard" class="field-input mt-1 appearance-none bg-[url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%23708090%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2s%3E%3C%2Fsvg%3E')] bg-[length:10px_auto] bg-[right_1rem_center] bg-no-repeat pr-8">
+          <label data-i18n="labelWard" class="field-label">Ward / Unit <span class="text-[var(--coral)]">*</span></label>
+          <select id="inputWard" required class="field-input mt-1 appearance-none bg-[url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%23708090%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2s%3E%3C%2Fsvg%3E')] bg-[length:10px_auto] bg-[right_1rem_center] bg-no-repeat pr-8">
             <option value="">Select Ward</option>
             <option>Ormoc 1st Ward</option>
             <option>Ormoc 2nd Ward</option>
@@ -171,17 +194,22 @@
         </div>
 
         <div>
-          <label class="field-label">Home Address</label>
+          <label data-i18n="labelAddress" class="field-label">Home Address</label>
           <input type="text" id="inputAddress" placeholder="Barangay, City/Municipality, Province" class="field-input mt-1">
         </div>
 
         <div>
-          <label class="field-label">Contact Info / Messenger Link</label>
+          <label data-i18n="labelContact" class="field-label">Contact Info / Messenger Link</label>
           <input type="text" id="inputContact" placeholder="Mobile number or facebook profile path" class="field-input mt-1">
         </div>
 
         <div>
-          <label class="field-label">Gender</label>
+          <label data-i18n="labelEmail" class="field-label">Email (optional — for confirmation)</label>
+          <input type="email" id="inputEmail" placeholder="you@example.com" class="field-input mt-1">
+        </div>
+
+        <div>
+          <label data-i18n="labelGender" class="field-label">Gender <span class="text-[var(--coral)]">*</span></label>
           <div class="grid grid-cols-2 gap-2 mt-1">
             <label class="radio-row" id="lblSister"><input type="radio" name="gender" value="Sister" id="genderSister"> Sister</label>
             <label class="radio-row" id="lblBrother"><input type="radio" name="gender" value="Brother" id="genderBrother"> Brother</label>
@@ -192,10 +220,10 @@
       <div class="perforation"></div>
 
       <div class="space-y-4">
-        <h3 class="font-mono text-[10px] font-bold tracking-widest text-gray-400 uppercase">Spiritual & Service</h3>
+        <h3 data-i18n="sectionSpiritual" class="font-mono text-[10px] font-bold tracking-widest text-gray-400 uppercase">Spiritual &amp; Service</h3>
         
         <div id="priesthoodField" class="collapsible-section">
-          <label class="field-label">Priesthood Office Held</label>
+          <label data-i18n="labelPriesthood" class="field-label">Priesthood Office Held</label>
           <div class="space-y-2 mt-1">
             <label class="radio-row"><input type="radio" name="priesthood" value="Aaronic Priesthood (Deacon / Teacher / Priest)"> Aaronic Priesthood (Deacon / Teacher / Priest)</label>
             <label class="radio-row"><input type="radio" name="priesthood" value="Melchizedek Priesthood (Elder)"> Melchizedek Priesthood (Elder)</label>
@@ -204,7 +232,7 @@
         </div>
 
         <div>
-          <label class="field-label">Covenant Milestones</label>
+          <label data-i18n="labelMilestones" class="field-label">Covenant Milestones</label>
           <div class="grid grid-cols-1 gap-2 mt-1">
             <label class="chip-check"><input type="checkbox" name="milestone" value="Has Current Temple Recommend"> Has Current Temple Recommend</label>
             <label class="chip-check"><input type="checkbox" name="milestone" value="Endowed"> Endowed</label>
@@ -213,7 +241,7 @@
         </div>
 
         <div>
-          <label class="field-label">Current Church Calling(s)</label>
+          <label data-i18n="labelCalling" class="field-label">Current Church Calling(s)</label>
           <input type="text" id="inputCalling" placeholder="Type &quot;None&quot; if currently without assignment" class="field-input mt-1">
         </div>
       </div>
@@ -221,20 +249,20 @@
       <div class="perforation"></div>
 
       <div class="space-y-4">
-        <h3 class="font-mono text-[10px] font-bold tracking-widest text-gray-400 uppercase">Background & Interests</h3>
+        <h3 data-i18n="sectionBackground" class="font-mono text-[10px] font-bold tracking-widest text-gray-400 uppercase">Background &amp; Interests</h3>
         
         <div>
-          <label class="field-label">Brief Biography</label>
+          <label data-i18n="labelBio" class="field-label">Brief Biography</label>
           <textarea id="inputAboutMe" rows="4" placeholder="Share a brief overview of who you are, your current focuses, or short-term personal goals..." class="field-input mt-1 custom-scrollbar resize-none"></textarea>
         </div>
 
         <div>
-          <label class="field-label">Spiritual Anchor</label>
+          <label data-i18n="labelAnchor" class="field-label">Spiritual Anchor</label>
           <textarea id="inputAnchor" rows="3" placeholder="Favorite scripture block, or foundational prophetic counsel..." class="field-input mt-1 custom-scrollbar resize-none"></textarea>
         </div>
 
         <div>
-          <label class="field-label">Hobbies & Fields of Interest</label>
+          <label data-i18n="labelHobbies" class="field-label">Hobbies &amp; Fields of Interest</label>
           <div class="grid grid-cols-1 gap-1.5 mt-1">
             <label class="chip-check"><input type="checkbox" name="hobby" value="Music / Guitar / Playing Instruments"> Music & Playing Instruments</label>
             <label class="chip-check"><input type="checkbox" name="hobby" value="Creative Photography / Videography"> Media Production & Photography</label>
@@ -247,12 +275,12 @@
         </div>
 
         <div>
-          <label class="field-label">Favorite Food / Comfort Treat</label>
+          <label data-i18n="labelFood" class="field-label">Favorite Food / Comfort Treat</label>
           <input type="text" id="inputFood" placeholder="Your favorite culinary comfort choice" class="field-input mt-1">
         </div>
 
         <div>
-          <label class="field-label">Temporal Engagement Status</label>
+          <label data-i18n="labelStatus" class="field-label">Temporal Engagement Status</label>
           <div class="grid grid-cols-2 gap-2 mt-1">
             <label class="radio-row"><input type="radio" name="status" value="Student"> Student</label>
             <label class="radio-row"><input type="radio" name="status" value="Employed"> Employed</label>
@@ -262,7 +290,7 @@
         </div>
 
         <div>
-          <label class="field-label">Academic Program / Major Discipline</label>
+          <label data-i18n="labelMajor" class="field-label">Academic Program / Major Discipline</label>
           <input type="text" id="inputMajor" placeholder="e.g., BS Information Technology (Leave blank if N/A)" class="field-input mt-1">
         </div>
       </div>
@@ -381,6 +409,169 @@
 </main>
 
 <script>
+  /* ============================================================
+     LANGUAGE TOGGLE — English / Tagalog / Cebuano
+     ------------------------------------------------------------
+     Translates labels, headings, and notices via data-i18n
+     attributes. Church-specific terms (Sister/Brother, Aaronic/
+     Melchizedek Priesthood, milestone names) are kept in English
+     since those are standardized terms used as-is across languages
+     in Church materials. Best-effort translations — if a native
+     Cebuano/Tagalog speaker on your committee wants to refine the
+     wording, just edit the strings below.
+     ============================================================ */
+  const I18N = {
+    en: {
+      appEyebrow: 'Ormoc Stake · Young Single Adults',
+      appTitle: 'Covenant Profile Builder',
+      btnDownload: 'Download PDF',
+      btnSubmit: 'Submit Profile',
+      dashboardEyebrow: 'Dashboard',
+      dashboardTitle: 'Profile Editor',
+      dashboardSub: 'Changes are instantly rendered onto the printable sheet layout on the right.',
+      explainerTitle: "Why We're Asking",
+      explainerBody: "This profile helps your ward and stake leaders get to know you, reach out at the right moments, and plan activities that actually fit who's in our YSA community. Fill in what you're comfortable sharing — every field below is meant to help someone minister to you better, not just collect data.",
+      privacyTitle: 'Data Privacy Notice',
+      privacyP1: 'By submitting this form, you agree that the information and photo you provide — including your name, birthdate, contact details, address, church calling, and personal background — will be collected and processed by the Ormoc Philippine Stake YSA committee, in accordance with the Data Privacy Act of 2012 (RA 10173).',
+      privacyP2: 'This information will be stored in a restricted Google Drive/Sheet accessible only to authorized stake and ward leaders, and used solely for ministering, member records, and YSA activity coordination. It will not be shared publicly or with third parties outside the stake.',
+      privacyP3html: 'You may request to have your information corrected or removed at any time by contacting the stake office at <a href="mailto:ormocysaprofiling@gmail.com" class="text-[var(--ocean-dark)] font-semibold hover:underline">ormocysaprofiling@gmail.com</a>.',
+      consentLabel: 'I have read the notice above and consent to my information and photo being collected, stored, and used as described.',
+      photoConsentLabel: '(Optional) I also allow my photo to be used in stake YSA social media posts, newsletters, or activity promotions.',
+      sectionPrimary: 'Primary Info',
+      sectionSpiritualHtml: 'Spiritual &amp; Service',
+      sectionBackgroundHtml: 'Background &amp; Interests',
+      labelPhoto: 'Individual Picture',
+      labelFullName: 'Full Name',
+      labelBirthdate: 'Birthdate',
+      labelMRN: 'Member Record No. (MRN)',
+      labelWardHtml: 'Ward / Unit <span class="text-[var(--coral)]">*</span>',
+      labelAddress: 'Home Address',
+      labelContact: 'Contact Info / Messenger Link',
+      labelEmail: 'Email (optional — for confirmation)',
+      labelGenderHtml: 'Gender <span class="text-[var(--coral)]">*</span>',
+      labelPriesthood: 'Priesthood Office Held',
+      labelMilestones: 'Covenant Milestones',
+      labelCalling: 'Current Church Calling(s)',
+      labelBio: 'Brief Biography',
+      labelAnchor: 'Spiritual Anchor',
+      labelHobbiesHtml: 'Hobbies &amp; Fields of Interest',
+      labelFood: 'Favorite Food / Comfort Treat',
+      labelStatus: 'Temporal Engagement Status',
+      labelMajor: 'Academic Program / Major Discipline'
+    },
+    tl: {
+      appEyebrow: 'Ormoc Stake · Young Single Adults',
+      appTitle: 'Covenant Profile Builder',
+      btnDownload: 'I-download ang PDF',
+      btnSubmit: 'Isumite ang Profile',
+      dashboardEyebrow: 'Dashboard',
+      dashboardTitle: 'Profile Editor',
+      dashboardSub: 'Agad mababago ang preview sa kanan kapag may binago ka sa form.',
+      explainerTitle: 'Bakit Namin Tinatanong Ito',
+      explainerBody: 'Ang profile na ito ay tumutulong sa mga lider ng ward at stake na makilala ka, ma-reach out sa tamang panahon, at makagawa ng mga aktibidad na akma sa ating YSA community. Punan lang ang mga bahaging komportable kang ibahagi — layunin ng bawat field na makatulong sa mas mabuting ministering, hindi lang para mangolekta ng datos.',
+      privacyTitle: 'Paunawa sa Data Privacy',
+      privacyP1: 'Sa pagsumite ng form na ito, sumasang-ayon ka na ang impormasyon at larawan na ibibigay mo — kasama ang iyong pangalan, kaarawan, contact details, address, church calling, at personal na background — ay kokolektahin at iproproseso ng Ormoc Philippine Stake YSA committee, alinsunod sa Data Privacy Act of 2012 (RA 10173).',
+      privacyP2: 'Ang impormasyong ito ay itatago sa restricted na Google Drive/Sheet na accessible lamang sa mga awtorisadong stake at ward leaders, at gagamitin lamang para sa ministering, member records, at pag-coordinate ng YSA activities. Hindi ito ibabahagi nang publiko o sa mga third party sa labas ng stake.',
+      privacyP3html: 'Maaari mong hilingin na iwasto o alisin ang iyong impormasyon anumang oras sa pamamagitan ng pakikipag-ugnayan sa stake office sa <a href="mailto:ormocysaprofiling@gmail.com" class="text-[var(--ocean-dark)] font-semibold hover:underline">ormocysaprofiling@gmail.com</a>.',
+      consentLabel: 'Nabasa ko ang paunawa sa itaas at pumapayag akong kolektahin, itago, at gamitin ang aking impormasyon at larawan ayon sa nakasaad.',
+      photoConsentLabel: '(Opsyonal) Pinapayagan ko rin na gamitin ang aking larawan sa social media, newsletter, o promosyon ng aktibidad ng stake YSA.',
+      sectionPrimary: 'Pangunahing Impormasyon',
+      sectionSpiritualHtml: 'Espirituwal &amp; Paglilingkod',
+      sectionBackgroundHtml: 'Background &amp; Mga Interes',
+      labelPhoto: 'Larawan',
+      labelFullName: 'Buong Pangalan',
+      labelBirthdate: 'Kaarawan',
+      labelMRN: 'Member Record No. (MRN)',
+      labelWardHtml: 'Ward / Unit <span class="text-[var(--coral)]">*</span>',
+      labelAddress: 'Tirahan',
+      labelContact: 'Contact Info / Messenger Link',
+      labelEmail: 'Email (opsyonal — para sa kumpirmasyon)',
+      labelGenderHtml: 'Kasarian <span class="text-[var(--coral)]">*</span>',
+      labelPriesthood: 'Hawak na Tungkulin sa Priesthood',
+      labelMilestones: 'Covenant Milestones',
+      labelCalling: 'Kasalukuyang Calling sa Simbahan',
+      labelBio: 'Maikling Talambuhay',
+      labelAnchor: 'Spiritual Anchor',
+      labelHobbiesHtml: 'Mga Hobby &amp; Interes',
+      labelFood: 'Paboritong Pagkain',
+      labelStatus: 'Temporal na Katayuan',
+      labelMajor: 'Kurso / Larangang Pinag-aaralan'
+    },
+    ceb: {
+      appEyebrow: 'Ormoc Stake · Young Single Adults',
+      appTitle: 'Covenant Profile Builder',
+      btnDownload: 'I-download ang PDF',
+      btnSubmit: 'I-submit ang Profile',
+      dashboardEyebrow: 'Dashboard',
+      dashboardTitle: 'Profile Editor',
+      dashboardSub: 'Diretso mabag-o ang preview sa tuo kung naay giusab sa form.',
+      explainerTitle: 'Ngano Nangutana Mi Ani',
+      explainerBody: 'Kini nga profile makatabang sa mga leader sa ward ug stake nga makaila nimo, makaabot sa hustong panahon, ug makaplano og mga aktibidad nga angay sa atong YSA community. I-fill-up lang ang mga bahin nga komportable ka ibutang — ang matag field naa aron makatabang sa pag-ministering nga mas maayo, dili lang aron mangolekta og data.',
+      privacyTitle: 'Pahibalo sa Data Privacy',
+      privacyP1: 'Pinaagi sa pag-submit niini nga form, mouyon ka nga ang imong impormasyon ug hulagway — lakip na ang imong ngalan, adlawng natawhan, contact details, address, church calling, ug personal nga background — kolektahon ug prosesohon sa Ormoc Philippine Stake YSA committee, subay sa Data Privacy Act of 2012 (RA 10173).',
+      privacyP2: 'Kini nga impormasyon i-store sa restricted nga Google Drive/Sheet nga ma-access lamang sa mga awtorisado nga stake ug ward leaders, ug gamiton lamang alang sa ministering, member records, ug pag-coordinate sa mga aktibidad sa YSA. Dili ni ipakita publiko o ipaambit sa uban gawas sa stake.',
+      privacyP3html: 'Mahimo nimong hangyoon nga ma-usab o matangtang ang imong impormasyon bisan unsang orasa pinaagi sa pagkontak sa stake office sa <a href="mailto:ormocysaprofiling@gmail.com" class="text-[var(--ocean-dark)] font-semibold hover:underline">ormocysaprofiling@gmail.com</a>.',
+      consentLabel: 'Nabasa nako ang pahibalo sa ibabaw ug miuyon ko nga kolektahon, i-store, ug gamiton ang akong impormasyon ug hulagway sumala sa gihulagway.',
+      photoConsentLabel: '(Opsyonal) Gitugotan usab nako nga gamiton ang akong hulagway sa social media, newsletter, o promosyon sa aktibidad sa stake YSA.',
+      sectionPrimary: 'Panguna nga Impormasyon',
+      sectionSpiritualHtml: 'Espirituwal &amp; Serbisyo',
+      sectionBackgroundHtml: 'Background &amp; Mga Interes',
+      labelPhoto: 'Hulagway',
+      labelFullName: 'Kompleto nga Ngalan',
+      labelBirthdate: 'Adlawng Natawhan',
+      labelMRN: 'Member Record No. (MRN)',
+      labelWardHtml: 'Ward / Unit <span class="text-[var(--coral)]">*</span>',
+      labelAddress: 'Puy-anan',
+      labelContact: 'Contact Info / Messenger Link',
+      labelEmail: 'Email (opsyonal — para sa kumpirmasyon)',
+      labelGenderHtml: 'Gender <span class="text-[var(--coral)]">*</span>',
+      labelPriesthood: 'Gihuptan nga Katungdanan sa Priesthood',
+      labelMilestones: 'Covenant Milestones',
+      labelCalling: 'Karon nga Calling sa Simbahan',
+      labelBio: 'Mubo nga Kasaysayan',
+      labelAnchor: 'Spiritual Anchor',
+      labelHobbiesHtml: 'Mga Hobby &amp; Interes',
+      labelFood: 'Paboritong Pagkaon',
+      labelStatus: 'Temporal nga Kahimtang',
+      labelMajor: 'Kurso / Gitun-an nga Larangan'
+    }
+  };
+
+  // Keys whose translated value contains HTML (links, required-asterisk
+  // spans) instead of plain text — these use innerHTML, everything else
+  // uses textContent for safety.
+  const I18N_HTML_KEYS = {
+    privacyP3: 'privacyP3html',
+    sectionSpiritual: 'sectionSpiritualHtml',
+    sectionBackground: 'sectionBackgroundHtml',
+    labelWard: 'labelWardHtml',
+    labelGender: 'labelGenderHtml',
+    labelHobbies: 'labelHobbiesHtml'
+  };
+
+  function setLang(lang){
+    const dict = I18N[lang] || I18N.en;
+    document.querySelectorAll('[data-i18n]').forEach(el => {
+      const key = el.getAttribute('data-i18n');
+      const htmlKey = I18N_HTML_KEYS[key];
+      if(htmlKey && dict[htmlKey]){
+        el.innerHTML = dict[htmlKey];
+      } else if(dict[key]){
+        el.textContent = dict[key];
+      }
+    });
+    document.querySelectorAll('.lang-btn').forEach(btn => {
+      btn.classList.toggle('active', btn.dataset.langBtn === lang);
+    });
+    try { localStorage.setItem('ysa_form_lang', lang); } catch(e) {}
+  }
+
+  (function initLang(){
+    let saved = 'en';
+    try { saved = localStorage.getItem('ysa_form_lang') || 'en'; } catch(e) {}
+    setLang(saved);
+  })();
+
   const form = document.getElementById('cvForm');
 
   function textOrDash(v){ return v && v.trim() ? v.trim() : '—'; }
@@ -579,6 +770,23 @@
     const genderInput = document.querySelector('input[name="gender"]:checked');
     const statusInput = document.querySelector('input[name="status"]:checked');
     const age = calcAge(document.getElementById('inputBirthdate').value);
+    const email = document.getElementById('inputEmail').value.trim();
+
+    if(!ward){
+      statusWrapper.classList.remove('hidden');
+      statusEl.textContent = 'Please select your Ward / Unit before submitting.';
+      statusEl.className = 'text-xs mt-2 text-[var(--coral)] bg-red-50 px-3 py-2 rounded-lg font-medium w-full';
+      document.getElementById('inputWard').scrollIntoView({ behavior: 'smooth', block: 'center' });
+      return;
+    }
+
+    if(!genderInput){
+      statusWrapper.classList.remove('hidden');
+      statusEl.textContent = 'Please select your Gender before submitting.';
+      statusEl.className = 'text-xs mt-2 text-[var(--coral)] bg-red-50 px-3 py-2 rounded-lg font-medium w-full';
+      document.getElementById('lblSister').scrollIntoView({ behavior: 'smooth', block: 'center' });
+      return;
+    }
 
     btn.disabled = true;
     btn.textContent = 'Processing Data Pipeline...';
@@ -589,18 +797,34 @@
       const pdfDataUri = await exportPdf('blob');
       const base64 = pdfDataUri.split(',')[1];
 
+      // Reuse the already-loaded photo preview (if one was uploaded)
+      // instead of re-reading the file, and only send it if the person
+      // checked the photo-use consent box.
+      const previewPhotoEl = document.getElementById('previewPhoto');
+      const photoConsented = document.getElementById('inputPhotoConsent').checked;
+      let photoBase64 = '';
+      let photoMimeType = '';
+      if(photoConsented && previewPhotoEl.src && previewPhotoEl.src.startsWith('data:')){
+        const [meta, b64] = previewPhotoEl.src.split(',');
+        photoMimeType = meta.match(/data:(.*?);base64/)[1];
+        photoBase64 = b64;
+      }
+
       const response = await fetch(APPS_SCRIPT_URL, {
         method: 'POST',
         headers: { 'Content-Type': 'text/plain;charset=utf-8' },
         body: JSON.stringify({
           filename: filename,
           pdfBase64: base64,
+          photoBase64: photoBase64,
+          photoMimeType: photoMimeType,
           name: name,
           ward: ward,
           gender: genderInput ? genderInput.value : '',
           age: age,
           temporalStatus: statusInput ? statusInput.value : '',
           contact: document.getElementById('inputContact').value.trim(),
+          email: email,
           bio: document.getElementById('inputAboutMe').value.trim()
         })
       });
@@ -609,7 +833,9 @@
       statusWrapper.classList.remove('hidden');
       if(result.status === 'success') {
         btn.textContent = 'Submitted Successfully ✓';
-        statusEl.textContent = 'Success! Your document was compiled and securely filed into the Stake YSA database system.';
+        statusEl.textContent = email
+          ? 'Success! Your profile is on file, and a confirmation was sent to ' + email + '.'
+          : 'Success! Your profile is on file with the Stake YSA committee.';
         statusEl.className = 'text-xs mt-2 text-[var(--ocean-dark)] bg-emerald-50 border border-emerald-200/60 px-3 py-2 rounded-lg font-medium w-full';
       } else {
         throw new Error(result.message || 'Remote tracking system transmission generic processing fault.');
